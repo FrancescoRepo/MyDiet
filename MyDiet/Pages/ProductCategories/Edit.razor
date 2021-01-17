@@ -1,0 +1,60 @@
+﻿@using MyDiet.Models.Dtos;
+@using MyDiet.Services.IService;
+
+@page "/productcategory/{id:int}/edit"
+@inject IProductCategoriesService _productCategoriesService
+@inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
+
+<h3>Edit ProductCategory</h3>
+<EditForm Model="@productCategoryDto" OnValidSubmit="ValidSubmit">
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <p>
+                    <MatTextField Label="Fiscal Code" @bind-Value="@productCategoryDto.Description" FullWidth="true" />
+                    <ValidationMessage For="@(() => productCategoryDto.Description)" />
+                </p>
+                @if (_loading)
+                {
+                    <MatProgressCircle Closed="true" />
+                }
+                else
+                {
+                    <MatButton Style="background: green;" Type="submit" Raised="true">Update</MatButton>
+                    <MatButton Style="background: red;" Raised="true">Cancel</MatButton>
+                }
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private bool _loading = false;
+    ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        productCategoryDto = await _productCategoriesService.GetProductCategory(id);
+    }
+
+    async Task ValidSubmit(EditContext editContext)
+    {
+        _loading = true;
+        ProductCategoryDto productCategory = editContext.Model as ProductCategoryDto;
+
+        await _productCategoriesService.UpdateProductCategory(id, productCategory);
+        _loading = false;
+        Toaster.Add("Product Category Updated", MatToastType.Success, "Success");
+
+        NavigationManager.NavigateTo("/productcategories");
+    }
+
+    void Back()
+    {
+        NavigationManager.NavigateTo("/productcategories");
+    }
+}

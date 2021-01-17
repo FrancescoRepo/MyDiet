@@ -1,10 +1,10 @@
 ﻿@using MyDiet.Models.Dtos;
-@using MyDiet.Models.ViewModels;
-@using MyDiet.Services;
+@using MyDiet.Services.IService;
 
 @page "/patients/create"
 @inject IPatientsService _patientsService
 @inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
 
 <h3>Create Patient</h3>
 <EditForm Model="@patientDto" OnValidSubmit="ValidSubmit">
@@ -70,6 +70,7 @@
 
         await _patientsService.CreatePatient(patientDtoSubmitted);
         _loading = false;
+        Toaster.Add("Patient added", MatToastType.Success, "Success");
 
         NavigationManager.NavigateTo("/patients");
     }

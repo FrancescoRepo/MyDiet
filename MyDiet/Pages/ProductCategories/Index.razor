@@ -1,0 +1,59 @@
+﻿@using MyDiet.Models.Dtos;
+@using MyDiet.Services.IService
+
+@page "/productcategories"
+@inject IProductCategoriesService _productCategoriesService
+@inject NavigationManager NavigationManager
+@inject IMatDialogService MatDialogService
+@inject IMatToaster Toaster
+
+<h3>Product Categories</h3>
+<div>
+    <a href="/productcategories/create" class="btn btn-success btn-block mb-3"><i class="fas fa-plus"></i> Add Product Category</a>
+</div>
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+            <MatTable Items="@productCategories" Class="mat-elevation-z6" Style="text-align: center; white-space: nowrap">
+                <MatTableHeader>
+                    <th style="text-align: center;">#</th>
+                    <th style="text-align: center; width: 100%;">Category</th>
+                    <th style="text-align: center;">Options</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Id</td>
+                    <td>@context.Description</td>
+                    <td>
+                        <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
+                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
+                    </td>
+                </MatTableRow>
+            </MatTable>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IList<ProductCategoryDto> productCategories { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        productCategories = await _productCategoriesService.GetAllProductCategories();
+    }
+
+    void Edit(int id)
+    {
+        NavigationManager.NavigateTo($"/productcategory/{id}/edit");
+    }
+
+    async Task Remove(ProductCategoryDto productCategory)
+    {
+        var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected product category?", new string[] { "Yes", "Cancel" });
+        if (result == "Yes")
+        {
+            await _productCategoriesService.DeleteProductCategory(productCategory.Id);
+            Toaster.Add("Product Category Deleted", MatToastType.Success, "Success");
+            productCategories.Remove(productCategory);
+        }
+    }
+}

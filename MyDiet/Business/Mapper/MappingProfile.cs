@@ -10,6 +10,9 @@ namespace MyDiet.Business.Mapper
         {
             CreateMap<Patient, PatientDto>();
             CreateMap<PatientDto, Patient>();
+
+            CreateMap<ProductCategory, ProductCategoryDto>();
+            CreateMap<ProductCategoryDto, ProductCategory>();
         }
     }
 }

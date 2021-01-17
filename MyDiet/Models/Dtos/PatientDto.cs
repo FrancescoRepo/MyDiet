@@ -4,7 +4,6 @@ namespace MyDiet.Models.Dtos
 {
     public class PatientDto
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]

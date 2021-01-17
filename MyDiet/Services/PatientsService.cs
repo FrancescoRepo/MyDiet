@@ -1,20 +1,11 @@
 ﻿using MyDiet.Business.IRepository;
-using MyDiet.Models;
 using MyDiet.Models.Dtos;
+using MyDiet.Services.IService;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyDiet.Services
 {
-    public interface IPatientsService
-    {
-        public Task<IList<PatientDto>> GetAllPatients();
-        public Task<PatientDto> GetPatient(int id);
-        public Task CreatePatient(PatientDto patientDto);
-        public Task UpdatePatient(int id, PatientDto patientDto);
-        public Task DeletePatient(int id);
-    }
-
     public class PatientsService : IPatientsService
     {
         private IPatientRepository _patientRepository;

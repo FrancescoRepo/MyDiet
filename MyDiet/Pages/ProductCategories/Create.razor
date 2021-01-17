@@ -1,0 +1,46 @@
+﻿@using MyDiet.Models.Dtos;
+@using MyDiet.Services.IService;
+
+@page "/productcategories/create"
+@inject IProductCategoriesService _productCategoriesService
+@inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
+
+<h3>Create ProductCategory</h3>
+<EditForm Model="@productCategoryDto" OnValidSubmit="ValidSubmit">
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <p>
+                    <MatTextField Label="Description" @bind-Value="@productCategoryDto.Description" FullWidth="true" />
+                    <ValidationMessage For="@(() => productCategoryDto.Description)" />
+                </p>
+                @if (_loading)
+                {
+                    <MatProgressCircle Closed="true" />
+                }
+                else
+                {
+                    <MatButton Type="submit" Raised="true">Save</MatButton>
+                }
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private bool _loading = false;
+    ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+
+    async Task ValidSubmit(EditContext editContext)
+    {
+        _loading = true;
+        ProductCategoryDto productCategory = editContext.Model as ProductCategoryDto;
+
+        await _productCategoriesService.CreateProductCategory(productCategory);
+        _loading = false;
+        Toaster.Add("Product Category added", MatToastType.Success, "Success");
+
+        NavigationManager.NavigateTo("/productcategories");
+    }
+}

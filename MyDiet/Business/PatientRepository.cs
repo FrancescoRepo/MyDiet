@@ -57,7 +57,6 @@ namespace MyDiet.Business
             Patient patientFromDb = await _ctx.Patients.FindAsync(id);
             Patient patientToUpdate = _mapper.Map<PatientDto, Patient>(patientDto, patientFromDb);
             _ctx.Entry(patientFromDb).CurrentValues.SetValues(patientToUpdate);
-            //_ctx.Patients.Update(patientToUpdate);
 
             await _ctx.SaveChangesAsync();
         }

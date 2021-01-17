@@ -1,5 +1,5 @@
 ﻿@using MyDiet.Models.Dtos;
-@using MyDiet.Services
+@using MyDiet.Services.IService
 
 @page "/patients"
 @inject IPatientsService _patientsService
@@ -14,10 +14,10 @@
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            <MatTable Items="@patients" Class="mat-elevation-z6" Style="text-align: center; width: 100%; white-space: nowrap">
+            <MatTable Items="@patients" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
                 <MatTableHeader>
-                    <th style="text-align: center;">Fiscal Code</th>
-                    <th style="text-align: center;">Name</th>
+                    <th style="text-align: center;"> Fiscal Code</th>
+                    <th style="text-align: center;"> Name</th>
                     <th style="text-align: center;">Surname</th>
                     <th style="text-align: center;">Gender</th>
                     <th style="text-align: center;">Age</th>
@@ -35,7 +35,7 @@
                     <td>@context.Phone</td>
                     <td>
                         <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
-                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context.Id))">Remove</MatButton>
+                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
                     </td>
                 </MatTableRow>
             </MatTable>
@@ -56,13 +56,14 @@
         NavigationManager.NavigateTo($"/patients/{id}/edit");
     }
 
-    async Task Remove(int id)
+    async Task Remove(PatientDto patient)
     {
-        var result = await MatDialogService.AskAsync("Test ask message", new string[] { "Yes", "Cancel" });
+        var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected patient?", new string[] { "Yes", "Cancel" });
         if (result == "Yes")
         {
-            await _patientsService.DeletePatient(id);
+            await _patientsService.DeletePatient(patient.Id);
             Toaster.Add("Patient Deleted", MatToastType.Success, "Success");
+            patients.Remove(patient);
         }
     }
 }

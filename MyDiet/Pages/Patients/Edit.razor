@@ -1,5 +1,4 @@
-﻿@using MyDiet.Models.ViewModels;
-@using MyDiet.Services;
+﻿@using MyDiet.Services.IService;
 @using MyDiet.Models.Dtos;
 
 @page "/patients/{id:int}/edit"
@@ -86,6 +85,8 @@
 
         _loading = false;
         Toaster.Add("Patient updated", MatToastType.Success, "Success");
+
+        Back();
     }
 
     void Back()

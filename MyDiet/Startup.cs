@@ -1,12 +1,9 @@
 using AutoMapper;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +13,8 @@ using MyDiet.Business;
 using MyDiet.Business.IRepository;
 using MyDiet.Data;
 using MyDiet.Services;
+using MyDiet.Services.IService;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 
 namespace MyDiet
@@ -45,8 +42,10 @@ namespace MyDiet
 
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddScoped<HttpClient>(); //MatTable needs an HttpClient
-            services.AddTransient<IPatientRepository, PatientRepository>();
+            services.AddScoped<IPatientRepository, PatientRepository>();
             services.AddScoped<IPatientsService, PatientsService>();
+            services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+            services.AddScoped<IProductCategoriesService, ProductCategoriesService>();
 
             services.AddMatBlazor();
             services.AddMatToaster(config =>
