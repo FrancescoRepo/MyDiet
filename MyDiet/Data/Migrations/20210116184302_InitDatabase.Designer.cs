@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyDiet.Data;
 
 namespace MyDiet.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210116184302_InitDatabase")]
+    partial class InitDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -299,7 +301,7 @@ namespace MyDiet.Data.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DietId")
+                    b.Property<int>("DietId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -482,7 +484,9 @@ namespace MyDiet.Data.Migrations
                 {
                     b.HasOne("MyDiet.Models.Diet", "Diet")
                         .WithMany()
-                        .HasForeignKey("DietId");
+                        .HasForeignKey("DietId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MyDiet.Models.Product", b =>

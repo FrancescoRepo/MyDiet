@@ -32,6 +32,9 @@ namespace MyDiet.Models
         [ForeignKey("DietId")]
         public Diet Diet { get; set; }
 
-        public int DietId { get; set; }
+        public int? DietId { get; set; }
+
+        [NotMapped]
+        public int Weight { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using MatBlazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -10,11 +11,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyDiet.Areas.Identity;
+using MyDiet.Business;
+using MyDiet.Business.IRepository;
 using MyDiet.Data;
+using MyDiet.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace MyDiet
 {
@@ -38,8 +41,13 @@ namespace MyDiet
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<HttpClient>(); //MatTable needs an HttpClient
+            services.AddTransient<IPatientRepository, PatientRepository>();
+            services.AddScoped<IPatientsService, PatientsService>();
+
+            services.AddMatBlazor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

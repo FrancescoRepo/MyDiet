@@ -1,0 +1,66 @@
+﻿@using MyDiet.Models.ViewModels;
+@using MyDiet.Services;
+@using MyDiet.Models;
+
+@page "/patients/{id:int}/edit"
+@inject IPatientsService _patientsService
+
+<h3>Create Patient</h3>
+<EditForm Model="@patientViewModel" OnValidSubmit="ValidSubmit">
+    <div class="mat-layou-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <p>
+                    <MatTextField Label="Fiscal Code" @bind-Value="@patientViewModel.Patient.FiscalCode" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientViewModel.Patient.FiscalCode)" />
+                </p>
+                <p>
+                    <MatTextField Label="Name" @bind-Value="@patientViewModel.Patient.Name" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientViewModel.Patient.Name)" />
+                </p>
+                <p>
+                    <MatTextField Label="Surname" @bind-Value="@patientViewModel.Patient.Surname" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientViewModel.Patient.Surname)" />
+                </p>
+                <p>
+                    <MatSelect Label="Gender" @bind-Value="@patientViewModel.Patient.Gender" FullWidth="true">
+                        <MatOptionString Value="male">Male</MatOptionString>
+                        <MatOptionString Value="female">Female</MatOptionString>
+                    </MatSelect>
+                    <ValidationMessage For="@(() => patientViewModel.Patient.Gender)" />
+                </p>
+                <p>
+                    <MatTextField Label="Age" @bind-Value="@patientViewModel.Patient.Age" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientViewModel.Patient.Age)" />
+                </p>
+                <p>
+                    <MatTextField Label="Email" @bind-Value="@patientViewModel.Patient.Email" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientViewModel.Patient.Email)" />
+                </p>
+                <p>
+                    <MatTextField Label="Phone" @bind-Value="@patientViewModel.Patient.Phone" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientViewModel.Patient.Phone)" />
+                </p>
+                <MatButton Type="submit" Raised="true">Save</MatButton>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    CreateEditPatientViewModel patientViewModel = new CreateEditPatientViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Patient patient = await _patientsService.GetPatient(id);
+        patientViewModel.Patient = patient;
+    }
+
+    void ValidSubmit()
+    {
+
+    }
+}

@@ -1,0 +1,49 @@
+﻿@using MyDiet.Models;
+@using MyDiet.Services
+ 
+@page "/patients"
+@inject IPatientsService _patientsService
+
+<h3>Patients</h3>
+<div>
+    <a href="/patients/create" class="btn btn-success btn-block mb-3"><i class="fas fa-plus"></i> Add Patient</a>
+</div>
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+            <MatTable Items="@patients" Class="mat-elevation-z6" Style="text-align: center">
+                <MatTableHeader>
+                    <th style="text-align: center">Fiscal Code</th>
+                    <th style="text-align: center">Name</th>
+                    <th style="text-align: center">Surname</th>
+                    <th style="text-align: center">Gender</th>
+                    <th style="text-align: center">Age</th>
+                    <th style="text-align: center">Email</th>
+                    <th style="text-align: center">Phone</th>
+                    <th style="text-align: center">Options</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.FiscalCode</td>
+                    <td>@context.Name</td>
+                    <td>@context.Surname</td>
+                    <td>@context.Gender</td>
+                    <td>@context.Age</td>
+                    <td>@context.Email</td>
+                    <td>@context.Phone</td>
+                    <td>
+                        <a href="/patients/@context.Id/edit" class="btn btn-primary">Edit</a>
+                    </td>
+                </MatTableRow>
+            </MatTable>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IList<Patient> patients { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        patients = await _patientsService.GetAllPatients();
+    }
+}

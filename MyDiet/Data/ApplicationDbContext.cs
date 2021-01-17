@@ -19,6 +19,7 @@ namespace MyDiet.Data
             base.OnModelCreating(builder);
             builder.Entity<DietMeal>().HasKey(dm => new { dm.DietId, dm.MealId });
             builder.Entity<MealProduct>().HasKey(mp => new { mp.MealId, mp.ProductId });
+            builder.Entity<Weight>().Property(w => w.WeightValue).HasColumnType("decimal(2,0)");
         }
 
         public DbSet<Diet> Diets { get; set; }
