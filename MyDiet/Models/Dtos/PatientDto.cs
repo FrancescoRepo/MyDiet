@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyDiet.Models
+namespace MyDiet.Models.Dtos
 {
-    public class Patient
+    public class PatientDto
     {
         [Key]
         public int Id { get; set; }
@@ -29,12 +28,6 @@ namespace MyDiet.Models
         [Required]
         public string Phone { get; set; }
 
-        [ForeignKey("DietId")]
-        public Diet Diet { get; set; }
-
-        public int? DietId { get; set; }
-
-        [NotMapped]
         public decimal Weight { get; set; }
     }
 }

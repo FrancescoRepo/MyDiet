@@ -1,3 +1,4 @@
+using AutoMapper;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -48,6 +49,17 @@ namespace MyDiet
             services.AddScoped<IPatientsService, PatientsService>();
 
             services.AddMatBlazor();
+            services.AddMatToaster(config =>
+            {
+                config.Position = MatToastPosition.TopRight;
+                config.PreventDuplicates = true;
+                config.NewestOnTop = true;
+                config.ShowCloseButton = true;
+                config.MaximumOpacity = 95;
+                config.VisibleStateDuration = 3000;
+                config.ShowProgressBar = false;
+            });
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

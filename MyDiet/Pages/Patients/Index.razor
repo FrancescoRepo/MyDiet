@@ -1,8 +1,11 @@
-﻿@using MyDiet.Models;
+﻿@using MyDiet.Models.Dtos;
 @using MyDiet.Services
- 
+
 @page "/patients"
 @inject IPatientsService _patientsService
+@inject NavigationManager NavigationManager
+@inject IMatDialogService MatDialogService
+@inject IMatToaster Toaster
 
 <h3>Patients</h3>
 <div>
@@ -11,16 +14,16 @@
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            <MatTable Items="@patients" Class="mat-elevation-z6" Style="text-align: center">
+            <MatTable Items="@patients" Class="mat-elevation-z6" Style="text-align: center; width: 100%; white-space: nowrap">
                 <MatTableHeader>
-                    <th style="text-align: center">Fiscal Code</th>
-                    <th style="text-align: center">Name</th>
-                    <th style="text-align: center">Surname</th>
-                    <th style="text-align: center">Gender</th>
-                    <th style="text-align: center">Age</th>
-                    <th style="text-align: center">Email</th>
-                    <th style="text-align: center">Phone</th>
-                    <th style="text-align: center">Options</th>
+                    <th style="text-align: center;">Fiscal Code</th>
+                    <th style="text-align: center;">Name</th>
+                    <th style="text-align: center;">Surname</th>
+                    <th style="text-align: center;">Gender</th>
+                    <th style="text-align: center;">Age</th>
+                    <th style="text-align: center;">Email</th>
+                    <th style="text-align: center;">Phone</th>
+                    <th style="text-align: center;">Options</th>
                 </MatTableHeader>
                 <MatTableRow>
                     <td>@context.FiscalCode</td>
@@ -31,7 +34,8 @@
                     <td>@context.Email</td>
                     <td>@context.Phone</td>
                     <td>
-                        <a href="/patients/@context.Id/edit" class="btn btn-primary">Edit</a>
+                        <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
+                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context.Id))">Remove</MatButton>
                     </td>
                 </MatTableRow>
             </MatTable>
@@ -40,10 +44,25 @@
 </div>
 
 @code {
-    private IList<Patient> patients { get; set; }
+    private IList<PatientDto> patients { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         patients = await _patientsService.GetAllPatients();
+    }
+
+    void Edit(int id)
+    {
+        NavigationManager.NavigateTo($"/patients/{id}/edit");
+    }
+
+    async Task Remove(int id)
+    {
+        var result = await MatDialogService.AskAsync("Test ask message", new string[] { "Yes", "Cancel" });
+        if (result == "Yes")
+        {
+            await _patientsService.DeletePatient(id);
+            Toaster.Add("Patient Deleted", MatToastType.Success, "Success");
+        }
     }
 }

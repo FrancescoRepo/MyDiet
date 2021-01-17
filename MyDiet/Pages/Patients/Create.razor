@@ -1,4 +1,4 @@
-﻿@using MyDiet.Models;
+﻿@using MyDiet.Models.Dtos;
 @using MyDiet.Models.ViewModels;
 @using MyDiet.Services;
 
@@ -7,64 +7,69 @@
 @inject NavigationManager NavigationManager
 
 <h3>Create Patient</h3>
-<EditForm Model="@patientViewModel" OnValidSubmit="ValidSubmit">
+<EditForm Model="@patientDto" OnValidSubmit="ValidSubmit">
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
                 <p>
-                    <MatTextField Label="Fiscal Code" @bind-Value="@patientViewModel.Patient.FiscalCode" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientViewModel.Patient.FiscalCode)" />
+                    <MatTextField Label="Fiscal Code" @bind-Value="@patientDto.FiscalCode" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientDto.FiscalCode)" />
                 </p>
                 <p>
-                    <MatTextField Label="Name" @bind-Value="@patientViewModel.Patient.Name" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientViewModel.Patient.Name)" />
+                    <MatTextField Label="Name" @bind-Value="@patientDto.Name" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientDto.Name)" />
                 </p>
                 <p>
-                    <MatTextField Label="Surname" @bind-Value="@patientViewModel.Patient.Surname" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientViewModel.Patient.Surname)" />
+                    <MatTextField Label="Surname" @bind-Value="@patientDto.Surname" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientDto.Surname)" />
                 </p>
                 <p>
-                    <MatSelect Label="Gender" @bind-Value="@patientViewModel.Patient.Gender" FullWidth="true">
+                    <MatSelect Label="Gender" @bind-Value="@patientDto.Gender" FullWidth="true">
                         <MatOptionString Value="male">Male</MatOptionString>
                         <MatOptionString Value="female">Female</MatOptionString>
                     </MatSelect>
-                    <ValidationMessage For="@(() => patientViewModel.Patient.Gender)" />
+                    <ValidationMessage For="@(() => patientDto.Gender)" />
                 </p>
                 <p>
-                    <MatTextField Label="Age" @bind-Value="@patientViewModel.Patient.Age" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientViewModel.Patient.Age)" />
+                    <MatTextField Label="Age" @bind-Value="@patientDto.Age" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientDto.Age)" />
                 </p>
                 <p>
-                    <MatTextField Label="Weight" @bind-Value="@patientViewModel.Weight" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientViewModel.Weight)" />
+                    <MatTextField Label="Weight" @bind-Value="@patientDto.Weight" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientDto.Weight)" />
                 </p>
                 <p>
-                    <MatTextField Label="Email" @bind-Value="@patientViewModel.Patient.Email" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientViewModel.Patient.Email)" />
+                    <MatTextField Label="Email" @bind-Value="@patientDto.Email" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientDto.Email)" />
                 </p>
                 <p>
-                    <MatTextField Label="Phone" @bind-Value="@patientViewModel.Patient.Phone" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientViewModel.Patient.Phone)" />
+                    <MatTextField Label="Phone" @bind-Value="@patientDto.Phone" FullWidth="true" />
+                    <ValidationMessage For="@(() => patientDto.Phone)" />
                 </p>
-                <MatButton Type="submit" Raised="true">Save</MatButton>
+                @if (_loading)
+                {
+                    <MatProgressCircle Closed="true" />
+                }
+                else
+                {
+                    <MatButton Type="submit" Raised="true">Save</MatButton>
+                }
             </div>
         </div>
     </div>
 </EditForm>
 
 @code {
-    CreateEditPatientViewModel patientViewModel = new CreateEditPatientViewModel
-    {
-        Patient = new Models.Patient(),
-    };
+    private bool _loading = false;
+    PatientDto patientDto = new PatientDto();
 
     async Task ValidSubmit(EditContext editContext)
     {
-        CreateEditPatientViewModel viewModelSubmitted = editContext.Model as CreateEditPatientViewModel;
-        Patient patientToAdd = viewModelSubmitted.Patient;
-        patientToAdd.Weight = viewModelSubmitted.Weight;
+        _loading = true;
+        PatientDto patientDtoSubmitted = editContext.Model as PatientDto;
 
-        await _patientsService.AddPatient(patientToAdd);
+        await _patientsService.CreatePatient(patientDtoSubmitted);
+        _loading = false;
 
         NavigationManager.NavigateTo("/patients");
     }

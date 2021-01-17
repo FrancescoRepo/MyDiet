@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MyDiet.Business.IRepository;
 using MyDiet.Data;
 using MyDiet.Models;
+using MyDiet.Models.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,23 +14,31 @@ namespace MyDiet.Business
     public class PatientRepository : IPatientRepository
     {
         private readonly ApplicationDbContext _ctx;
-        public PatientRepository(ApplicationDbContext ctx)
+        private readonly IMapper _mapper;
+
+        public PatientRepository(ApplicationDbContext ctx, IMapper mapper)
         {
             _ctx = ctx;
+            _mapper = mapper;
         }
 
-        public async Task<IList<Patient>> GetAllPatients()
+        public async Task<IList<PatientDto>> GetAllPatients()
         {
-            return await _ctx.Patients.ToListAsync();
+            return _mapper.Map<IList<Patient>, IList<PatientDto>>(await _ctx.Patients.ToListAsync());
         }
 
-        public async Task<Patient> GetPatient(int id)
+        public async Task<PatientDto> GetPatient(int id)
         {
-            return await _ctx.Patients.FirstOrDefaultAsync(p => p.Id == id);
+            Patient patient = await _ctx.Patients.FindAsync(id);
+            Weight patientWeight = _ctx.Weights.Where(w => w.PatientId == patient.Id).FirstOrDefault();
+            patient.Weight = patientWeight.WeightValue;
+
+            return _mapper.Map<Patient, PatientDto>(patient);
         }
 
-        public async Task AddPatient(Patient patient)
+        public async Task CreatePatient(PatientDto patientDto)
         {
+            Patient patient = _mapper.Map<PatientDto, Patient>(patientDto);
             await _ctx.Patients.AddAsync(patient);
             await _ctx.SaveChangesAsync();
 
@@ -42,9 +52,13 @@ namespace MyDiet.Business
             await _ctx.SaveChangesAsync();
         }
 
-        public async Task UpdatePatient(int id, Patient patient)
+        public async Task UpdatePatient(int id, PatientDto patientDto)
         {
-            _ctx.Patients.Update(patient);
+            Patient patientFromDb = await _ctx.Patients.FindAsync(id);
+            Patient patientToUpdate = _mapper.Map<PatientDto, Patient>(patientDto, patientFromDb);
+            _ctx.Entry(patientFromDb).CurrentValues.SetValues(patientToUpdate);
+            //_ctx.Patients.Update(patientToUpdate);
+
             await _ctx.SaveChangesAsync();
         }
 

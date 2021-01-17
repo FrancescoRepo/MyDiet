@@ -1,5 +1,6 @@
 ﻿using MyDiet.Business.IRepository;
 using MyDiet.Models;
+using MyDiet.Models.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,10 +8,10 @@ namespace MyDiet.Services
 {
     public interface IPatientsService
     {
-        public Task<IList<Patient>> GetAllPatients();
-        public Task<Patient> GetPatient(int id);
-        public Task AddPatient(Patient patient);
-        public Task UpdatePatient(int id, Patient patient);
+        public Task<IList<PatientDto>> GetAllPatients();
+        public Task<PatientDto> GetPatient(int id);
+        public Task CreatePatient(PatientDto patientDto);
+        public Task UpdatePatient(int id, PatientDto patientDto);
         public Task DeletePatient(int id);
     }
 
@@ -23,24 +24,24 @@ namespace MyDiet.Services
             _patientRepository = patientRepository;
         }
 
-        public async Task<IList<Patient>> GetAllPatients()
+        public async Task<IList<PatientDto>> GetAllPatients()
         {
             return await _patientRepository.GetAllPatients();
         }
 
-        public async Task<Patient> GetPatient(int id)
+        public async Task<PatientDto> GetPatient(int id)
         {
             return await _patientRepository.GetPatient(id);
         }
 
-        public async Task AddPatient(Patient patient)
+        public async Task CreatePatient(PatientDto patientDto)
         {
-            await _patientRepository.AddPatient(patient);
+            await _patientRepository.CreatePatient(patientDto);
         }
 
-        public async Task UpdatePatient(int id, Patient patient)
+        public async Task UpdatePatient(int id, PatientDto patientDto)
         {
-            await _patientRepository.UpdatePatient(id, patient);
+            await _patientRepository.UpdatePatient(id, patientDto);
         }
 
         public async Task DeletePatient(int id)
