@@ -2,7 +2,7 @@
 @using MyDiet.Services.IService;
 
 @page "/patients/create"
-@inject IPatientsService _patientsService
+@inject IPatientService _patientsService
 @inject NavigationManager NavigationManager
 @inject IMatToaster Toaster
 
@@ -68,7 +68,7 @@
         _loading = true;
         PatientDto patientDtoSubmitted = editContext.Model as PatientDto;
 
-        await _patientsService.CreatePatient(patientDtoSubmitted);
+        await _patientsService.Create(patientDtoSubmitted);
         _loading = false;
         Toaster.Add("Patient added", MatToastType.Success, "Success");
 

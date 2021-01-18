@@ -4,12 +4,7 @@ using System.Threading.Tasks;
 
 namespace MyDiet.Business.IRepository
 {
-    public interface IProductCategoryRepository
+    public interface IProductCategoryRepository : IRepository<ProductCategoryDto>
     {
-        public Task<IList<ProductCategoryDto>> GetAllProductCategories();
-        public Task<ProductCategoryDto> GetProductCategory(int id);
-        public Task CreateProductCategory(ProductCategoryDto productCategoryDto);
-        public Task UpdateProductCategory(int id, ProductCategoryDto productCategoryDto);
-        public Task DeleteProductCategory(int id);
     }
 }

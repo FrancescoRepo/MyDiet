@@ -21,25 +21,25 @@ namespace MyDiet.Business
             _mapper = mapper;
         }
 
-        public async Task<IList<ProductCategoryDto>> GetAllProductCategories()
+        public async Task<IList<ProductCategoryDto>> GetAll()
         {
             return _mapper.Map<IList<ProductCategory>, IList<ProductCategoryDto>>(await _ctx.ProductCategories.ToListAsync());
         }
 
-        public async Task<ProductCategoryDto> GetProductCategory(int id)
+        public async Task<ProductCategoryDto> Get(int id)
         {
             ProductCategory productCategory = await _ctx.ProductCategories.FindAsync(id);
             return _mapper.Map<ProductCategory, ProductCategoryDto>(productCategory);
         }
 
-        public async Task CreateProductCategory(ProductCategoryDto productCategoryDto)
+        public async Task Create(ProductCategoryDto productCategoryDto)
         {
             ProductCategory productCategory = _mapper.Map<ProductCategoryDto, ProductCategory>(productCategoryDto);
             await _ctx.ProductCategories.AddAsync(productCategory);
             await _ctx.SaveChangesAsync();
         }
 
-        public async Task UpdateProductCategory(int id, ProductCategoryDto productCategoryDto)
+        public async Task Update(int id, ProductCategoryDto productCategoryDto)
         {
             ProductCategory productCategoryFromDb = await _ctx.ProductCategories.FindAsync(id);
             ProductCategory productCategoryToUpdate = _mapper.Map<ProductCategoryDto, ProductCategory>(productCategoryDto);
@@ -48,7 +48,7 @@ namespace MyDiet.Business
             await _ctx.SaveChangesAsync();
         }
 
-        public async Task DeleteProductCategory(int id)
+        public async Task Delete(int id)
         {
             ProductCategory productCategoryFromDb = await _ctx.ProductCategories.FindAsync(id);
             _ctx.ProductCategories.Remove(productCategoryFromDb);

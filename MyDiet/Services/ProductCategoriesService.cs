@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyDiet.Services
 {
-    public class ProductCategoriesService : IProductCategoriesService
+    public class ProductCategoriesService : IProductCategoryService
     {
         private IProductCategoryRepository _productCategoryRepository;
 
@@ -15,28 +15,28 @@ namespace MyDiet.Services
             _productCategoryRepository = productCategoryRepository;
         }
 
-        public async Task<IList<ProductCategoryDto>> GetAllProductCategories()
+        public async Task<IList<ProductCategoryDto>> GetAll()
         {
-            return await _productCategoryRepository.GetAllProductCategories();
+            return await _productCategoryRepository.GetAll();
         }
-        public async Task<ProductCategoryDto> GetProductCategory(int id)
+        public async Task<ProductCategoryDto> Get(int id)
         {
-            return await _productCategoryRepository.GetProductCategory(id);
-        }
-
-        public async Task CreateProductCategory(ProductCategoryDto productCategoryDto)
-        {
-            await _productCategoryRepository.CreateProductCategory(productCategoryDto);
+            return await _productCategoryRepository.Get(id);
         }
 
-        public async Task UpdateProductCategory(int id, ProductCategoryDto productCategoryDto)
+        public async Task Create(ProductCategoryDto productCategoryDto)
         {
-            await _productCategoryRepository.UpdateProductCategory(id, productCategoryDto);
+            await _productCategoryRepository.Create(productCategoryDto);
         }
 
-        public async Task DeleteProductCategory(int id)
+        public async Task Update(int id, ProductCategoryDto productCategoryDto)
         {
-            await _productCategoryRepository.DeleteProductCategory(id);
+            await _productCategoryRepository.Update(id, productCategoryDto);
+        }
+
+        public async Task Delete(int id)
+        {
+            await _productCategoryRepository.Delete(id);
         }
     }
 }

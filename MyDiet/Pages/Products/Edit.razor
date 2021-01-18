@@ -1,0 +1,64 @@
+﻿@using MyDiet.Models.Dtos;
+@using MyDiet.Services.IService;
+
+@page "/products/{id:int}/edit"
+@inject IProductService _productService
+@inject IProductCategoryService _productCategoryService
+@inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
+
+<h3>Edit ProductCategory</h3>
+<EditForm Model="@productDto" OnSubmit="ValidSubmit">
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <p>
+                    <MatTextField Label="Product Name" @bind-Value="@productDto.Name" FullWidth="true" />
+                    <ValidationMessage For="@(() => productDto.Name)" />
+                </p>
+                <p>
+                    <MatTextField Label="Description" @bind-Value="@productDto.Description" FullWidth="true" />
+                    <ValidationMessage For="@(() => productDto.Description)" />
+                </p>
+                <p>
+                    <MatSelectItem Items="@productDto.ProductCategories" @bind-Value="@productDto.ProductCategory" FullWidth="true" Label="Product Category">
+                        <ItemTemplate Context="productCategoryContext">
+                            <span>@productCategoryContext?.Description</span>
+                        </ItemTemplate>
+                    </MatSelectItem>
+                </p>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                    <MatButton Type="submit" Raised="true" Style="background: green;">Update</MatButton>
+                    <MatButton Type="button" Raised="true" Style="background: red;" @onclick="Back">Cancel</MatButton>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    ProductDto productDto = new ProductDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        productDto = await _productService.Get(id);
+    }
+
+    async Task ValidSubmit(EditContext editContext)
+    {
+        ProductDto product = editContext.Model as ProductDto;
+
+        await _productService.Update(id, product);
+        Toaster.Add("Product Updated", MatToastType.Success, "Success");
+
+        Back();
+    }
+
+    void Back()
+    {
+        NavigationManager.NavigateTo("/products");
+    }
+}

@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace MyDiet.Business.IRepository
 {
-    public interface IPatientRepository
+    public interface IPatientRepository : IRepository<PatientDto>
     {
-        public Task<IList<PatientDto>> GetAllPatients();
+        /*public Task<IList<PatientDto>> GetAll();
         public Task<PatientDto> GetPatient(int id);
         public Task CreatePatient(PatientDto patientDto);
         public Task UpdatePatient(int id, PatientDto patientDto);
-        public Task DeletePatient(int id);
+        public Task DeletePatient(int id);*/
     }
 }

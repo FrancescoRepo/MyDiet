@@ -2,7 +2,7 @@
 @using MyDiet.Services.IService
 
 @page "/patients"
-@inject IPatientsService _patientsService
+@inject IPatientService _patientsService
 @inject NavigationManager NavigationManager
 @inject IMatDialogService MatDialogService
 @inject IMatToaster Toaster
@@ -48,7 +48,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        patients = await _patientsService.GetAllPatients();
+        patients = await _patientsService.GetAll();
     }
 
     void Edit(int id)
@@ -61,7 +61,7 @@
         var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected patient?", new string[] { "Yes", "Cancel" });
         if (result == "Yes")
         {
-            await _patientsService.DeletePatient(patient.Id);
+            await _patientsService.Delete(patient.Id);
             Toaster.Add("Patient Deleted", MatToastType.Success, "Success");
             patients.Remove(patient);
         }

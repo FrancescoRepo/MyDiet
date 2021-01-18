@@ -1,0 +1,54 @@
+﻿@using MyDiet.Models.Dtos;
+@using MyDiet.Services.IService;
+@using System.Collections.Generic;
+
+@page "/products/create"
+@inject IProductService _productService
+@inject IProductCategoryService _productCategoryService
+@inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
+
+<h3>Create ProductCategory</h3>
+<EditForm Model="@productDto" OnValidSubmit="ValidSubmit">
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <p>
+                    <MatTextField Label="Product Name" @bind-Value="@productDto.Name" FullWidth="true" />
+                    <ValidationMessage For="@(() => productDto.Name)" />
+                </p>
+                <p>
+                    <MatTextField Label="Product Name" @bind-Value="@productDto.Description" FullWidth="true" />
+                    <ValidationMessage For="@(() => productDto.Description)" />
+                </p>
+                <p>
+                    <MatSelectItem Items="@productDto.ProductCategories" @bind-Value="@productDto.ProductCategory">
+                        <ItemTemplate Context="productCategoryContext">
+                            <span>@productCategoryContext?.Description</span>
+                        </ItemTemplate>
+                    </MatSelectItem>
+                </p>
+                <MatButton Type="submit" Raised="true">Save</MatButton>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    ProductDto productDto = new ProductDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        productDto.ProductCategories = (await _productCategoryService.GetAll()).ToList().AsReadOnly();
+    }
+
+    async Task ValidSubmit(EditContext editContext)
+    {
+        ProductDto product = editContext.Model as ProductDto;
+
+        await _productService.Create(product);
+        
+        Toaster.Add("Product added", MatToastType.Success, "Success");
+        NavigationManager.NavigateTo("/productcategories");
+    }
+}

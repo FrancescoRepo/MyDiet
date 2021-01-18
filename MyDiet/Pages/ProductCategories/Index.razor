@@ -2,7 +2,7 @@
 @using MyDiet.Services.IService
 
 @page "/productcategories"
-@inject IProductCategoriesService _productCategoriesService
+@inject IProductCategoryService _productCategoriesService
 @inject NavigationManager NavigationManager
 @inject IMatDialogService MatDialogService
 @inject IMatToaster Toaster
@@ -38,7 +38,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        productCategories = await _productCategoriesService.GetAllProductCategories();
+        productCategories = await _productCategoriesService.GetAll();
     }
 
     void Edit(int id)
@@ -51,7 +51,7 @@
         var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected product category?", new string[] { "Yes", "Cancel" });
         if (result == "Yes")
         {
-            await _productCategoriesService.DeleteProductCategory(productCategory.Id);
+            await _productCategoriesService.Delete(productCategory.Id);
             Toaster.Add("Product Category Deleted", MatToastType.Success, "Success");
             productCategories.Remove(productCategory);
         }

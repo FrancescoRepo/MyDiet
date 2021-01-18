@@ -2,7 +2,7 @@
 @using MyDiet.Models.Dtos;
 
 @page "/patients/{id:int}/edit"
-@inject IPatientsService _patientsService
+@inject IPatientService _patientsService
 @inject NavigationManager NavigationManager
 @inject IMatToaster Toaster
 
@@ -47,17 +47,10 @@
                     <ValidationMessage For="@(() => patientDto.Phone)" />
                 </p>
             </div>
-            @if (_loading)
-            {
-                <MatProgressBar Closed="true" />
-            }
-            else
-            {
-                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
-                    <MatButton Type="submit" Raised="true" Style="background: green;">Update</MatButton>
-                    <MatButton Raised="true" Style="background: red;" @onclick="Back">Cancel</MatButton>
-                </div>
-            }
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                <MatButton Type="submit" Raised="true" Style="background: green;">Update</MatButton>
+                <MatButton Raised="true" Type="button" Style="background: red;" @onclick="Back">Cancel</MatButton>
+            </div>
         </div>
     </div>
 </EditForm>
@@ -72,7 +65,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        patientDto = await _patientsService.GetPatient(id);
+        patientDto = await _patientsService.Get(id);
     }
 
     async Task ValidSubmit(EditContext editContext)
@@ -81,7 +74,7 @@
 
         PatientDto patientDtoSubmitted = editContext.Model as PatientDto;
 
-        await Task.Run(() => _patientsService.UpdatePatient(id, patientDtoSubmitted));
+        await Task.Run(() => _patientsService.Update(id, patientDtoSubmitted));
 
         _loading = false;
         Toaster.Add("Patient updated", MatToastType.Success, "Success");

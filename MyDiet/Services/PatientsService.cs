@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyDiet.Services
 {
-    public class PatientsService : IPatientsService
+    public class PatientsService : IPatientService
     {
         private IPatientRepository _patientRepository;
 
@@ -15,29 +15,29 @@ namespace MyDiet.Services
             _patientRepository = patientRepository;
         }
 
-        public async Task<IList<PatientDto>> GetAllPatients()
+        public async Task<IList<PatientDto>> GetAll()
         {
-            return await _patientRepository.GetAllPatients();
+            return await _patientRepository.GetAll();
         }
 
-        public async Task<PatientDto> GetPatient(int id)
+        public async Task<PatientDto> Get(int id)
         {
-            return await _patientRepository.GetPatient(id);
+            return await _patientRepository.Get(id);
         }
 
-        public async Task CreatePatient(PatientDto patientDto)
+        public async Task Create(PatientDto entityDto)
         {
-            await _patientRepository.CreatePatient(patientDto);
+            await _patientRepository.Create(entityDto);
         }
 
-        public async Task UpdatePatient(int id, PatientDto patientDto)
+        public async Task Update(int id, PatientDto entityDto)
         {
-            await _patientRepository.UpdatePatient(id, patientDto);
+            await _patientRepository.Update(id, entityDto);
         }
 
-        public async Task DeletePatient(int id)
+        public async Task Delete(int id)
         {
-            await _patientRepository.DeletePatient(id);
+            await _patientRepository.Delete(id);
         }
     }
 }

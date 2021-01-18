@@ -43,9 +43,11 @@ namespace MyDiet
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddScoped<HttpClient>(); //MatTable needs an HttpClient
             services.AddScoped<IPatientRepository, PatientRepository>();
-            services.AddScoped<IPatientsService, PatientsService>();
+            services.AddScoped<IPatientService, PatientsService>();
             services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
-            services.AddScoped<IProductCategoriesService, ProductCategoriesService>();
+            services.AddScoped<IProductCategoryService, ProductCategoriesService>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductService, ProductService>();
 
             services.AddMatBlazor();
             services.AddMatToaster(config =>

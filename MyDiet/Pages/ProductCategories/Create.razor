@@ -2,7 +2,7 @@
 @using MyDiet.Services.IService;
 
 @page "/productcategories/create"
-@inject IProductCategoriesService _productCategoriesService
+@inject IProductCategoryService _productCategoriesService
 @inject NavigationManager NavigationManager
 @inject IMatToaster Toaster
 
@@ -37,7 +37,7 @@
         _loading = true;
         ProductCategoryDto productCategory = editContext.Model as ProductCategoryDto;
 
-        await _productCategoriesService.CreateProductCategory(productCategory);
+        await _productCategoriesService.Create(productCategory);
         _loading = false;
         Toaster.Add("Product Category added", MatToastType.Success, "Success");
 

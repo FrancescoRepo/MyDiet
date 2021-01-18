@@ -22,21 +22,21 @@ namespace MyDiet.Business
             _mapper = mapper;
         }
 
-        public async Task<IList<PatientDto>> GetAllPatients()
+        public async Task<IList<PatientDto>> GetAll()
         {
             return _mapper.Map<IList<Patient>, IList<PatientDto>>(await _ctx.Patients.ToListAsync());
         }
 
-        public async Task<PatientDto> GetPatient(int id)
+        public async Task<PatientDto> Get(int id)
         {
             Patient patient = await _ctx.Patients.FindAsync(id);
-            Weight patientWeight = _ctx.Weights.Where(w => w.PatientId == patient.Id).FirstOrDefault();
+            Weight patientWeight = await _ctx.Weights.FirstOrDefaultAsync(w => w.PatientId == patient.Id);
             patient.Weight = patientWeight.WeightValue;
 
             return _mapper.Map<Patient, PatientDto>(patient);
         }
 
-        public async Task CreatePatient(PatientDto patientDto)
+        public async Task Create(PatientDto patientDto)
         {
             Patient patient = _mapper.Map<PatientDto, Patient>(patientDto);
             await _ctx.Patients.AddAsync(patient);
@@ -52,7 +52,7 @@ namespace MyDiet.Business
             await _ctx.SaveChangesAsync();
         }
 
-        public async Task UpdatePatient(int id, PatientDto patientDto)
+        public async Task Update(int id, PatientDto patientDto)
         {
             Patient patientFromDb = await _ctx.Patients.FindAsync(id);
             Patient patientToUpdate = _mapper.Map<PatientDto, Patient>(patientDto, patientFromDb);
@@ -61,10 +61,11 @@ namespace MyDiet.Business
             await _ctx.SaveChangesAsync();
         }
 
-        public async Task DeletePatient(int id)
+        public async Task Delete(int id)
         {
-            Patient patient = await _ctx.Patients.FirstOrDefaultAsync(p => p.Id == id);
+            Patient patient = await _ctx.Patients.FindAsync(id);
             _ctx.Patients.Remove(patient);
+
             await _ctx.SaveChangesAsync();
         }
     }
