@@ -1,0 +1,54 @@
+﻿@using MyDiet.Models.Dtos;
+@using MyDiet.Services.IService;
+
+@page "/meals/{id:int}/edit"
+@inject IMealService _mealService
+@inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
+
+<h3>Edit Meal</h3>
+<EditForm Model="@mealDto" OnValidSubmit="ValidSubmit">
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <p>
+                    <MatTextField Label="Name" @bind-Value="@mealDto.Name" FullWidth="true" />
+                    <ValidationMessage For="@(() => mealDto.Name)" />
+                </p>
+                <p>
+                    <MatTextField Label="Description" @bind-Value="@mealDto.Description" FullWidth="true" />
+                    <ValidationMessage For="@(() => mealDto.Description)" />
+                </p>
+                <MatButton Style="background: green;" Type="submit" Raised="true">Update</MatButton>
+                <MatButton Style="background: red;" Type="button" Raised="true" @onclick="Back">Cancel</MatButton>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    MealDto mealDto = new MealDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        mealDto = await _mealService.Get(id);
+    }
+
+    async Task ValidSubmit(EditContext editContext)
+    {
+        MealDto meal = editContext.Model as MealDto;
+
+        await _mealService.Update(id, meal);
+
+        Toaster.Add("Meal Updated", MatToastType.Success, "Success");
+        Back();
+    }
+
+    void Back()
+    {
+        NavigationManager.NavigateTo("/meals");
+    }
+}

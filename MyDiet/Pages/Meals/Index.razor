@@ -1,37 +1,29 @@
 ﻿@using MyDiet.Models.Dtos;
 @using MyDiet.Services.IService
 
-@page "/products"
-@inject IProductService _productService
+@page "/meals"
+@inject IMealService _mealService
 @inject NavigationManager NavigationManager
 @inject IMatDialogService MatDialogService
 @inject IMatToaster Toaster
 
-<h3>Products</h3>
+<h3>Meals</h3>
+
 <div class="mat-layout-grid">
     <div>
-        <a href="/products/create" class="btn btn-success btn-block mb-3"><i class="fas fa-plus"></i> Add Product</a>
+        <a href="/meals/create" class="btn btn-success btn-block mb-3"><i class="fas fa-plus"></i> Add Meal</a>
     </div>
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            <MatTable Items="@products" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
+            <MatTable Items="@meals" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
                 <MatTableHeader>
                     <th style="text-align: center;"> Name</th>
                     <th style="text-align: center;">Description</th>
-                    <th style="text-align: center;">Category</th>
                     <th style="text-align: center;">Options</th>
                 </MatTableHeader>
                 <MatTableRow>
                     <td>@context.Name</td>
                     <td>@context.Description</td>
-                    @if (context.ProductCategory == null)
-                    {
-                        <td>No Product Category Associated</td>
-                    }
-                    else
-                    {
-                        <td>@context.ProductCategory.Description</td>
-                    }
                     <td>
                         <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
                         <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
@@ -43,26 +35,26 @@
 </div>
 
 @code {
-    private IList<ProductDto> products { get; set; }
+    private IList<MealDto> meals { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        products = await _productService.GetAll();
+        meals = await _mealService.GetAll();
     }
 
     void Edit(int id)
     {
-        NavigationManager.NavigateTo($"/products/{id}/edit");
+        NavigationManager.NavigateTo($"/meals/{id}/edit");
     }
 
-    async Task Remove(ProductDto productDto)
+    async Task Remove(MealDto mealDto)
     {
-        var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected product?", new string[] { "Yes", "Cancel" });
+        var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected meal?", new string[] { "Yes", "Cancel" });
         if (result == "Yes")
         {
-            await _productService.Delete(productDto.Id);
-            Toaster.Add("Product Deleted", MatToastType.Success, "Success");
-            products.Remove(productDto);
+            await _mealService.Delete(mealDto.Id);
+            Toaster.Add("Meal Deleted", MatToastType.Success, "Success");
+            meals.Remove(mealDto);
         }
     }
 }

@@ -12,7 +12,7 @@
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
                 <p>
-                    <MatTextField Label="Fiscal Code" @bind-Value="@productCategoryDto.Description" FullWidth="true" />
+                    <MatTextField Label="Description" @bind-Value="@productCategoryDto.Description" FullWidth="true" />
                     <ValidationMessage For="@(() => productCategoryDto.Description)" />
                 </p>
                 <MatButton Style="background: green;" Type="submit" Raised="true">Update</MatButton>
