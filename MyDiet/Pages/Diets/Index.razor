@@ -1,0 +1,80 @@
+﻿@using MyDiet.Models.Dtos;
+@using MyDiet.Services.IService
+
+@page "/diets"
+@inject IDietService _dietService
+@inject NavigationManager NavigationManager
+@inject IMatDialogService MatDialogService
+@inject IMatToaster Toaster
+
+<h3>Diets</h3>
+<div class="mat-layout-grid">
+    <div>
+        <a href="/diets/create" class="btn btn-success btn-block mb-3"><i class="fas fa-plus"></i> Add Diet</a>
+    </div>
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+            <MatTable Items="@diets" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
+                <MatTableHeader>
+                    <th style="text-align: center;"> Name</th>
+                    <th style="text-align: center;">Description</th>
+                    <th style="text-align: center;">Patient</th>
+                    <th style="text-align: center;">Options</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Name</td>
+                    <td>@context.Description</td>
+                    @if (context.PatientDto == null)
+                    {
+                        <td>No Patient Associated</td>
+                    }
+                    else
+                    {
+                        <td>@context.PatientDto.Name @context.PatientDto.Surname</td>
+                    }
+                    <td>
+                        <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
+                        <MatButton Raised="true" @onclick="@(_ => ManageMeals(@context.Id))">Manage Meals</MatButton>
+                        <MatButton Raised="true" @onclick="@(_ => ManageProducts(@context.Id))">Manage Products</MatButton>
+                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
+                    </td>
+                </MatTableRow>
+            </MatTable>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IList<DietDto> diets { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        diets = await _dietService.GetAll();
+    }
+
+    void Edit(int id)
+    {
+        NavigationManager.NavigateTo($"/diets/{id}/edit");
+    }
+
+    void ManageMeals(int id)
+    {
+        NavigationManager.NavigateTo($"/diets/{id}/meals/edit");
+    }
+
+    void ManageProducts(int id)
+    {
+        NavigationManager.NavigateTo($"/diets/{id}/products/edit");
+    }
+
+    async Task Remove(DietDto dietDto)
+    {
+        var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected diet?", new string[] { "Yes", "Cancel" });
+        if (result == "Yes")
+        {
+            await _dietService.Delete(dietDto.Id);
+            Toaster.Add("Diet Deleted", MatToastType.Success, "Success");
+            diets.Remove(dietDto);
+        }
+    }
+}

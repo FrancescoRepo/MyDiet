@@ -28,5 +28,7 @@ namespace MyDiet.Models.Dtos
         public string Phone { get; set; }
 
         public decimal Weight { get; set; }
+
+        public int? DietId { get; set; }
     }
 }

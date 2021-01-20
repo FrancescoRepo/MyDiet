@@ -50,6 +50,8 @@ namespace MyDiet
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IMealRepository, MealRepository>();
             services.AddScoped<IMealService, MealService>();
+            services.AddScoped<IDietRepository, DietRepository>();
+            services.AddScoped<IDietService, DietService>();
 
             services.AddMatBlazor();
             services.AddMatToaster(config =>

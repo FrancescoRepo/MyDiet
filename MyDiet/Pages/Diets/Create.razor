@@ -1,0 +1,54 @@
+﻿@using MyDiet.Models.Dtos;
+@using MyDiet.Services.IService;
+@using System.Collections.Generic;
+
+@page "/diets/create"
+@inject IDietService _dietService
+@inject IPatientService _patientService
+@inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
+
+<h3>Create Diet</h3>
+<EditForm Model="@dietDto" OnValidSubmit="ValidSubmit">
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <p>
+                    <MatTextField Label="Diet Name" @bind-Value="@dietDto.Name" FullWidth="true" />
+                    <ValidationMessage For="@(() => dietDto.Name)" />
+                </p>
+                <p>
+                    <MatTextField Label="Product Name" @bind-Value="@dietDto.Description" FullWidth="true" />
+                    <ValidationMessage For="@(() => dietDto.Description)" />
+                </p>
+                <p>
+                    <MatSelectItem Items="@dietDto.Patients" @bind-Value="@dietDto.PatientDto">
+                        <ItemTemplate Context="patientCategoryContext">
+                            <span>@patientCategoryContext?.Name @patientCategoryContext?.Surname </span>
+                        </ItemTemplate>
+                    </MatSelectItem>
+                </p>
+                <MatButton Type="submit" Raised="true">Save</MatButton>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    DietDto dietDto = new DietDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        dietDto.Patients = (await _patientService.GetAll()).ToList().AsReadOnly();
+    }
+
+    async Task ValidSubmit(EditContext editContext)
+    {
+        DietDto diet = editContext.Model as DietDto;
+
+        await _dietService.Create(diet);
+
+        Toaster.Add("Diet added", MatToastType.Success, "Success");
+        NavigationManager.NavigateTo("/diets");
+    }
+}

@@ -54,7 +54,7 @@ namespace MyDiet.Business
 
         public async Task Update(int id, PatientDto patientDto)
         {
-            Patient patientFromDb = await _ctx.Patients.FindAsync(id);
+            Patient patientFromDb = await _ctx.Patients.Include(p => p.Diet).FirstOrDefaultAsync(p => p.Id == id);
             Patient patientToUpdate = _mapper.Map<PatientDto, Patient>(patientDto, patientFromDb);
             _ctx.Entry(patientFromDb).CurrentValues.SetValues(patientToUpdate);
 
@@ -67,6 +67,16 @@ namespace MyDiet.Business
             _ctx.Patients.Remove(patient);
 
             await _ctx.SaveChangesAsync();
+        }
+
+        public async Task DisassociateDiet(int id)
+        {
+            Patient patient = await _ctx.Patients.Include(p => p.Diet).FirstOrDefaultAsync(p => p.DietId == id);
+            if(patient != null)
+            {
+                patient.Diet = null;
+                await _ctx.SaveChangesAsync();
+            }
         }
     }
 }

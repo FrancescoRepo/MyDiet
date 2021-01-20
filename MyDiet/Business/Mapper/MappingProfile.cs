@@ -19,6 +19,9 @@ namespace MyDiet.Business.Mapper
 
             CreateMap<Meal, MealDto>();
             CreateMap<MealDto, Meal>();
+
+            CreateMap<Diet, DietDto>();
+            CreateMap<DietDto, Diet>();
         }
     }
 }
