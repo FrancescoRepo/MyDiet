@@ -1,0 +1,105 @@
+﻿@using MyDiet.Models.Dtos
+@using MyDiet.Services.IService
+
+@page "/diets/{id:int}/meals/edit"
+@inject IDietService _dietService
+@inject IMealService _mealService
+@inject IMatDialogService MatDialogService
+@inject IMatToaster Toaster
+
+<h3>Meals Diet #@id</h3>
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        @if (@dietDto.DietMeal.Count > 0)
+        {
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <MatTable Items="@dietDto.DietMeal" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
+                    <MatTableHeader>
+                        <th style="text-align: center;">Meal Name</th>
+                        <th style="text-align: center;">Meal Description</th>
+                        <th style="text-align: center;">Options</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.Meal.Name</td>
+                        <td>@context.Meal.Description</td>
+                        <td>
+                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context.Meal.Id))">Remove</MatButton>
+                        </td>
+                    </MatTableRow>
+                </MatTable>
+            </div>
+        }
+        else
+        {
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <div class="jumbotron jumbotron-fluid">
+                    <div class="container">
+                        <h1 class="display-4 text-center">No Meals present in this diet</h1>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+            <MatAccordion>
+                <MatExpansionPanel @bind-Expanded="@panelOpenState">
+                    <MatExpansionPanelSummary>
+                        <MatExpansionPanelHeader>
+                            Add meal to diet
+                        </MatExpansionPanelHeader>
+                    </MatExpansionPanelSummary>
+                    <MatExpansionPanelDetails>
+                        <p>
+                            <MatSelectItem Items="@dietDto.Meals" @bind-Value="@mealDto" FullWidth="true">
+                                <ItemTemplate Context="mealCategoryContext">
+                                    <span>@mealCategoryContext?.Name </span>
+                                </ItemTemplate>
+                            </MatSelectItem>
+                        </p>
+                        <p>
+                            <MatButton Style="background: green;" Raised="true" Type="button" @onclick="ValidSubmit">Save</MatButton>
+                        </p>
+                    </MatExpansionPanelDetails>
+                </MatExpansionPanel>
+            </MatAccordion>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private bool panelOpenState;
+
+    private DietDto dietDto = new DietDto();
+    private MealDto mealDto = new MealDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await getDietMeals();
+    }
+
+    private async Task getDietMeals()
+    {
+        dietDto = await _dietService.GetAllDietMeals(id);
+        dietDto.Meals = (await _mealService.GetAll()).ToList().AsReadOnly();
+    }
+
+    async Task ValidSubmit()
+    {
+        await _mealService.AddMealToDiet(id, mealDto);
+        await getDietMeals();
+    }
+
+    async Task Remove(int mealId)
+    {
+        var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected meal from the diet?", new string[] { "Yes", "Cancel" });
+        if (result == "Yes")
+        {
+            await _mealService.RemoveMealFromDiet(id, mealId);
+            await getDietMeals();
+            Toaster.Add("Meal Deleted", MatToastType.Success, "Success");
+        }
+    }
+}

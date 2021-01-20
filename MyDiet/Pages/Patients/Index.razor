@@ -14,37 +14,43 @@
     </div>
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            <MatTable Items="@patients" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
-                <MatTableHeader>
-                    <th style="text-align: center;"> Fiscal Code</th>
-                    <th style="text-align: center;"> Name</th>
-                    <th style="text-align: center;">Surname</th>
-                    <th style="text-align: center;">Gender</th>
-                    <th style="text-align: center;">Age</th>
-                    <th style="text-align: center;">Email</th>
-                    <th style="text-align: center;">Phone</th>
-                    <th style="text-align: center;">Options</th>
-                </MatTableHeader>
-                <MatTableRow>
-                    <td>@context.FiscalCode</td>
-                    <td>@context.Name</td>
-                    <td>@context.Surname</td>
-                    <td>@context.Gender</td>
-                    <td>@context.Age</td>
-                    <td>@context.Email</td>
-                    <td>@context.Phone</td>
-                    <td>
-                        <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
-                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
-                    </td>
-                </MatTableRow>
-            </MatTable>
+            @if (patients.Count > 0)
+            {
+                <MatTable Items="@patients" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
+                    <MatTableHeader>
+                        <th style="text-align: center;"> Fiscal Code</th>
+                        <th style="text-align: center;"> Name</th>
+                        <th style="text-align: center;">Surname</th>
+                        <th style="text-align: center;">Gender</th>
+                        <th style="text-align: center;">Age</th>
+                        <th style="text-align: center;">Email</th>
+                        <th style="text-align: center;">Phone</th>
+                        <th style="text-align: center;">Options</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.FiscalCode</td>
+                        <td>@context.Name</td>
+                        <td>@context.Surname</td>
+                        <td>@context.Gender</td>
+                        <td>@context.Age</td>
+                        <td>@context.Email</td>
+                        <td>@context.Phone</td>
+                        <td>
+                            <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
+                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
+                        </td>
+                    </MatTableRow>
+                </MatTable>
+            } else
+            {
+                <Jumbotron Message="No Patients added yet"/>
+            }
         </div>
     </div>
 </div>
 
 @code {
-    private IList<PatientDto> patients { get; set; }
+    private IList<PatientDto> patients { get; set; } = new List<PatientDto>();
 
     protected override async Task OnInitializedAsync()
     {

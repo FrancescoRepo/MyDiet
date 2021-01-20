@@ -37,5 +37,14 @@ namespace MyDiet.Services
         {
             await _mealRepository.Delete(id);
         }
+
+        public async Task AddMealToDiet(int dietId, MealDto mealDto)
+        {
+            await _mealRepository.AddMealToDiet(dietId, mealDto);
+        }
+        public async Task RemoveMealFromDiet(int dietId, int mealId)
+        {
+            await _mealRepository.RemoveMealFromDiet(dietId, mealId);
+        }
     }
 }

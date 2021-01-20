@@ -17,6 +17,6 @@ namespace MyDiet.Models.Dtos
 
         public IReadOnlyList<ProductCategoryDto> ProductCategories { get; set; } = new List<ProductCategoryDto>().AsReadOnly();
 
-        public IList<MealProduct> MealProduct { get; set; }
+        public IList<MealProduct> MealProduct { get; set; } = new List<MealProduct>();
     }
 }

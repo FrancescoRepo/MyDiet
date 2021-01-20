@@ -15,27 +15,34 @@
     </div>
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            <MatTable Items="@meals" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
-                <MatTableHeader>
-                    <th style="text-align: center;"> Name</th>
-                    <th style="text-align: center;">Description</th>
-                    <th style="text-align: center;">Options</th>
-                </MatTableHeader>
-                <MatTableRow>
-                    <td>@context.Name</td>
-                    <td>@context.Description</td>
-                    <td>
-                        <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
-                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
-                    </td>
-                </MatTableRow>
-            </MatTable>
+            @if (meals.Count > 0)
+            {
+                <MatTable Items="@meals" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
+                    <MatTableHeader>
+                        <th style="text-align: center;"> Name</th>
+                        <th style="text-align: center;">Description</th>
+                        <th style="text-align: center;">Options</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.Name</td>
+                        <td>@context.Description</td>
+                        <td>
+                            <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
+                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
+                        </td>
+                    </MatTableRow>
+                </MatTable>
+            } else
+            {
+                <Jumbotron Message="No meals addedd yet"/>
+            }
+
         </div>
     </div>
 </div>
 
 @code {
-    private IList<MealDto> meals { get; set; }
+    private IList<MealDto> meals { get; set; } = new List<MealDto>();
 
     protected override async Task OnInitializedAsync()
     {

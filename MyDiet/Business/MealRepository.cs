@@ -55,5 +55,25 @@ namespace MyDiet.Business
 
             await _ctx.SaveChangesAsync();
         }
+
+        public async Task AddMealToDiet(int dietId, MealDto mealDto)
+        {
+            //Diet dietFromDb = await _ctx.Diets.Include(d => d.DietMeal).FirstOrDefaultAsync(d => d.Id == dietId);
+            DietMeal dietMeal = new DietMeal
+            {
+                MealId = mealDto.Id,
+                DietId = dietId
+            };
+
+            await _ctx.AddAsync(dietMeal);
+            await _ctx.SaveChangesAsync();
+        }
+
+        public async Task RemoveMealFromDiet(int dietId, int mealId)
+        {
+            DietMeal dietMeal = await _ctx.DietMeals.Where(dm => dm.DietId == dietId && dm.MealId == mealId).FirstOrDefaultAsync();
+            _ctx.Remove(dietMeal);
+            await _ctx.SaveChangesAsync();
+        }
     }
 }

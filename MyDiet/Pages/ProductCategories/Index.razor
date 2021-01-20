@@ -14,27 +14,33 @@
     </div>
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            <MatTable Items="@productCategories" Class="mat-elevation-z6" Style="text-align: center; white-space: nowrap">
-                <MatTableHeader>
-                    <th style="text-align: center;">#</th>
-                    <th style="text-align: center; width: 100%;">Category</th>
-                    <th style="text-align: center;">Options</th>
-                </MatTableHeader>
-                <MatTableRow>
-                    <td>@context.Id</td>
-                    <td>@context.Description</td>
-                    <td>
-                        <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
-                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
-                    </td>
-                </MatTableRow>
-            </MatTable>
+            @if (productCategories.Count > 0)
+            {
+                <MatTable Items="@productCategories" Class="mat-elevation-z6" Style="text-align: center; white-space: nowrap">
+                    <MatTableHeader>
+                        <th style="text-align: center;">#</th>
+                        <th style="text-align: center; width: 100%;">Category</th>
+                        <th style="text-align: center;">Options</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.Id</td>
+                        <td>@context.Description</td>
+                        <td>
+                            <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
+                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
+                        </td>
+                    </MatTableRow>
+                </MatTable>
+            } else
+            {
+                <Jumbotron Message="No Product Categories added yet"/>
+            }
         </div>
     </div>
 </div>
 
 @code {
-    private IList<ProductCategoryDto> productCategories { get; set; }
+    private IList<ProductCategoryDto> productCategories { get; set; } = new List<ProductCategoryDto>();
 
     protected override async Task OnInitializedAsync()
     {

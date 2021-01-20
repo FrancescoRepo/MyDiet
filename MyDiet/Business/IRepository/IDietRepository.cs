@@ -1,4 +1,5 @@
-﻿using MyDiet.Models.Dtos;
+﻿using MyDiet.Models;
+using MyDiet.Models.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,5 +9,6 @@ namespace MyDiet.Business.IRepository
 {
     public interface IDietRepository : IRepository<DietDto>
     {
+        public Task<DietDto> GetAllDietMeals(int id);
     }
 }

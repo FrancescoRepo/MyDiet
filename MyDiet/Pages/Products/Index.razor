@@ -14,36 +14,42 @@
     </div>
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            <MatTable Items="@products" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
-                <MatTableHeader>
-                    <th style="text-align: center;"> Name</th>
-                    <th style="text-align: center;">Description</th>
-                    <th style="text-align: center;">Category</th>
-                    <th style="text-align: center;">Options</th>
-                </MatTableHeader>
-                <MatTableRow>
-                    <td>@context.Name</td>
-                    <td>@context.Description</td>
-                    @if (context.ProductCategory == null)
-                    {
-                        <td>No Product Category Associated</td>
-                    }
-                    else
-                    {
-                        <td>@context.ProductCategory.Description</td>
-                    }
-                    <td>
-                        <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
-                        <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
-                    </td>
-                </MatTableRow>
-            </MatTable>
+            @if (products.Count > 0)
+            {
+                <MatTable Items="@products" Class="mat-elevation-z6" Style="text-align: center; width: 100%; table-layout: fixed; white-space: nowrap">
+                    <MatTableHeader>
+                        <th style="text-align: center;"> Name</th>
+                        <th style="text-align: center;">Description</th>
+                        <th style="text-align: center;">Category</th>
+                        <th style="text-align: center;">Options</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.Name</td>
+                        <td>@context.Description</td>
+                        @if (context.ProductCategory == null)
+                            {
+                            <td>No Product Category Associated</td>
+                            }
+                            else
+                            {
+                            <td>@context.ProductCategory.Description</td>
+                            }
+                        <td>
+                            <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
+                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
+                        </td>
+                    </MatTableRow>
+                </MatTable>
+            } else
+            {
+                <Jumbotron Message="No Products added yet"/>
+            }
         </div>
     </div>
 </div>
 
 @code {
-    private IList<ProductDto> products { get; set; }
+    private IList<ProductDto> products { get; set; } = new List<ProductDto>();
 
     protected override async Task OnInitializedAsync()
     {

@@ -8,5 +8,6 @@ namespace MyDiet.Services.IService
 {
     public interface IDietService : IService<DietDto>
     {
+        public Task<DietDto> GetAllDietMeals(int id);
     }
 }

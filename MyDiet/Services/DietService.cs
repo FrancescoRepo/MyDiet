@@ -38,5 +38,10 @@ namespace MyDiet.Services
         {
             await _dietRepository.Delete(id);
         }
+
+        public async Task<DietDto> GetAllDietMeals(int id)
+        {
+            return await _dietRepository.GetAllDietMeals(id);
+        }
     }
 }

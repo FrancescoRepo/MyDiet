@@ -15,8 +15,10 @@ namespace MyDiet.Models.Dtos
 
         public IReadOnlyList<PatientDto> Patients { get; set; } = new List<PatientDto>().AsReadOnly();
 
+        public IReadOnlyList<MealDto> Meals { get; set; } = new List<MealDto>().AsReadOnly();
+
         public PatientDto PatientDto { get; set; }
 
-        public IList<DietMeal> DietMeal { get; set; }
+        public IList<DietMeal> DietMeal { get; set; } = new List<DietMeal>();
     }
 }

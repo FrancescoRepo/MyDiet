@@ -13,8 +13,8 @@ namespace MyDiet.Models.Dtos
         [Required]
         public string Description { get; set; }
 
-        public IList<DietMeal> DietMeal { get; set; }
+        public IList<DietMeal> DietMeal { get; set; } = new List<DietMeal>();
 
-        public IList<MealProduct> MealProduct { get; set; }
+        public IList<MealProduct> MealProduct { get; set; } = new List<MealProduct>();
     }
 }

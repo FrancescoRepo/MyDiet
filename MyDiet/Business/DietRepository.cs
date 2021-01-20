@@ -81,5 +81,11 @@ namespace MyDiet.Business
 
             await _ctx.SaveChangesAsync();
         }
+
+        public async Task<DietDto> GetAllDietMeals(int id)
+        {
+            var diet = await _ctx.Diets.Include(d => d.DietMeal).ThenInclude(dm => dm.Meal).FirstOrDefaultAsync(d => d.Id == id);
+            return _mapper.Map<Diet, DietDto>(diet);
+        }
     }
 }
