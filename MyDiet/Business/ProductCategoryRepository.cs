@@ -15,6 +15,9 @@ namespace MyDiet.Business
     {
         private readonly ApplicationDbContext _ctx;
         private readonly IMapper _mapper;
+
+        private const string DESCRIPTION_PARAMETER = "Description";
+
         public ProductCategoryRepository(ApplicationDbContext ctx, IMapper mapper)
         {
             _ctx = ctx;
@@ -54,6 +57,16 @@ namespace MyDiet.Business
             _ctx.ProductCategories.Remove(productCategoryFromDb);
 
             await _ctx.SaveChangesAsync();
+        }
+
+        public bool CheckIfUnique(string parameter, ProductCategoryDto entity)
+        {
+            if(parameter.Equals(DESCRIPTION_PARAMETER))
+            {
+                return _ctx.ProductCategories.Any(pc => pc.Description == entity.Description);
+            }
+
+            return false;
         }
     }
 }

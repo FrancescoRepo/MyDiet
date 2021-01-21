@@ -8,7 +8,8 @@
 @inject IMatToaster Toaster
 
 <h3>Edit ProductCategory</h3>
-<EditForm Model="@productDto" OnSubmit="ValidSubmit">
+<EditForm EditContext="@EditContext" OnSubmit="ValidSubmit">
+    <DataAnnotationsValidator/>
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -40,11 +41,16 @@
     [Parameter]
     public int id { get; set; }
 
-    ProductDto productDto = new ProductDto();
+    private EditContext EditContext;
+    private ProductDto productDto = new ProductDto();
+    private ValidationMessageStore messages;
 
     protected override async Task OnInitializedAsync()
     {
         productDto = await _productService.Get(id);
+        EditContext = new EditContext(productDto);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        messages = new ValidationMessageStore(EditContext);
     }
 
     async Task ValidSubmit(EditContext editContext)
@@ -60,5 +66,22 @@
     void Back()
     {
         NavigationManager.NavigateTo("/products");
+    }
+
+    private void EditContext_OnFieldChanged(object sender,
+                                               FieldChangedEventArgs e)
+    {
+        string fieldName = e.FieldIdentifier.FieldName;
+        ProductDto dto = e.FieldIdentifier.Model as ProductDto;
+        bool isUnique = _productService.CheckIfUnique(fieldName, dto);
+
+        if (isUnique)
+        {
+            messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
+        }
+        else
+        {
+            messages.Clear(e.FieldIdentifier);
+        }
     }
 }

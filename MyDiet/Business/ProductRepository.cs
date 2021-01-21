@@ -5,6 +5,7 @@ using MyDiet.Data;
 using MyDiet.Models;
 using MyDiet.Models.Dtos;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyDiet.Business
@@ -13,6 +14,8 @@ namespace MyDiet.Business
     {
         private readonly ApplicationDbContext _ctx;
         private readonly IMapper _mapper;
+
+        private const string NAME_PARAMETER = "Name";
 
         public ProductRepository(ApplicationDbContext ctx, IMapper mapper)
         {
@@ -58,6 +61,16 @@ namespace MyDiet.Business
             _ctx.Products.Remove(productFromDb);
 
             await _ctx.SaveChangesAsync();
+        }
+
+        public bool CheckIfUnique(string parameter, ProductDto entity)
+        {
+            if(parameter.Equals(NAME_PARAMETER))
+            {
+                return _ctx.Products.Any(p => p.Name == entity.Name);
+            }
+
+            return false;
         }
     }
 }

@@ -16,6 +16,12 @@ namespace MyDiet.Business
         private readonly ApplicationDbContext _ctx;
         private readonly IMapper _mapper;
 
+        private const string FISCAL_CODE_PARAMETER = "FiscalCode";
+        private const string NAME_PARAMETER = "Name";
+        private const string SURNAME_PARAMETER = "Surname";
+        private const string PHONE_PARAMETER = "Phone";
+        private const string EMAIL_PARAMETER = "Email";
+
         public PatientRepository(ApplicationDbContext ctx, IMapper mapper)
         {
             _ctx = ctx;
@@ -77,6 +83,31 @@ namespace MyDiet.Business
                 patient.Diet = null;
                 await _ctx.SaveChangesAsync();
             }
+        }
+
+        public bool CheckIfUnique(string parameter, PatientDto entity)
+        {
+            bool isUnique = false;
+            switch(parameter)
+            {
+                case FISCAL_CODE_PARAMETER:
+                    isUnique = _ctx.Patients.Any(p => p.FiscalCode == entity.FiscalCode);
+                    break;
+                case NAME_PARAMETER:
+                    isUnique = _ctx.Patients.Any(p => p.Name == entity.Name);
+                    break;
+                case SURNAME_PARAMETER:
+                    isUnique = _ctx.Patients.Any(p => p.Surname == entity.Surname);
+                    break;
+                case PHONE_PARAMETER:
+                    isUnique = _ctx.Patients.Any(p => p.Phone == entity.Phone);
+                    break;
+                case EMAIL_PARAMETER:
+                    isUnique = _ctx.Patients.Any(p => p.Email == entity.Email);
+                    break;
+            }
+
+            return isUnique;
         }
     }
 }

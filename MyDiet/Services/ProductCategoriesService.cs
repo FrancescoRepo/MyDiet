@@ -38,5 +38,10 @@ namespace MyDiet.Services
         {
             await _productCategoryRepository.Delete(id);
         }
+
+        public bool CheckIfUnique(string parameter, ProductCategoryDto entityDto)
+        {
+            return _productCategoryRepository.CheckIfUnique(parameter, entityDto);
+        }
     }
 }

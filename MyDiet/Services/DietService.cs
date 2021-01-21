@@ -43,5 +43,10 @@ namespace MyDiet.Services
         {
             return await _dietRepository.GetAllDietMeals(id);
         }
+
+        public bool CheckIfUnique(string parameter, DietDto entityDto)
+        {
+            return _dietRepository.CheckIfUnique(parameter, entityDto);
+        }
     }
 }

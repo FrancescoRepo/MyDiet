@@ -9,7 +9,8 @@
 @inject IMatToaster Toaster
 
 <h3>Create Diet</h3>
-<EditForm Model="@dietDto" OnValidSubmit="ValidSubmit">
+<EditForm EditContext="@EditContext" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator/>
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -35,11 +36,16 @@
 </EditForm>
 
 @code {
-    DietDto dietDto = new DietDto();
+    private EditContext EditContext;
+    private DietDto dietDto = new DietDto();
+    private ValidationMessageStore messages;
 
     protected override async Task OnInitializedAsync()
     {
         dietDto.Patients = (await _patientService.GetAll()).ToList().AsReadOnly();
+        EditContext = new EditContext(dietDto);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        messages = new ValidationMessageStore(EditContext);
     }
 
     async Task ValidSubmit(EditContext editContext)
@@ -50,5 +56,22 @@
 
         Toaster.Add("Diet added", MatToastType.Success, "Success");
         NavigationManager.NavigateTo("/diets");
+    }
+
+    private void EditContext_OnFieldChanged(object sender,
+                                               FieldChangedEventArgs e)
+    {
+        string fieldName = e.FieldIdentifier.FieldName;
+        DietDto dto = e.FieldIdentifier.Model as DietDto;
+        bool isUnique = _dietService.CheckIfUnique(fieldName, dto);
+
+        if (isUnique)
+        {
+            messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
+        }
+        else
+        {
+            messages.Clear(e.FieldIdentifier);
+        }
     }
 }

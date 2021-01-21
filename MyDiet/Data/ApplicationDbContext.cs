@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyDiet.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MyDiet.Data
 {
@@ -20,6 +17,14 @@ namespace MyDiet.Data
             builder.Entity<DietMeal>().HasKey(dm => new { dm.DietId, dm.MealId });
             builder.Entity<MealProduct>().HasKey(mp => new { mp.MealId, mp.ProductId });
             builder.Entity<Weight>().Property(w => w.WeightValue).HasColumnType("decimal(2,0)");
+
+            builder.Entity<ProductCategory>().HasIndex(pc => pc.Description).IsUnique();
+            builder.Entity<Product>().HasIndex(p => p.Name).IsUnique();
+            builder.Entity<Patient>().HasIndex(p => p.FiscalCode).IsUnique();
+            builder.Entity<Patient>().HasIndex(p => p.Email).IsUnique();
+            builder.Entity<Patient>().HasIndex(p => p.Phone).IsUnique();
+            builder.Entity<Meal>().HasIndex(m => m.Name).IsUnique();
+            builder.Entity<Diet>().HasIndex(d => d.Name).IsUnique();
         }
 
         public DbSet<Diet> Diets { get; set; }

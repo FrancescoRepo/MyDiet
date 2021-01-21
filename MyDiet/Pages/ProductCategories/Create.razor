@@ -7,7 +7,8 @@
 @inject IMatToaster Toaster
 
 <h3>Create ProductCategory</h3>
-<EditForm Model="@productCategoryDto" OnValidSubmit="ValidSubmit">
+<EditForm EditContext="@EditContext" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator />
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -15,32 +16,51 @@
                     <MatTextField Label="Description" @bind-Value="@productCategoryDto.Description" FullWidth="true" />
                     <ValidationMessage For="@(() => productCategoryDto.Description)" />
                 </p>
-                @if (_loading)
-                {
-                    <MatProgressCircle Closed="true" />
-                }
-                else
-                {
-                    <MatButton Type="submit" Raised="true">Save</MatButton>
-                }
+                <MatButton Type="submit" Raised="true" Style="background: green;">Save</MatButton>
             </div>
         </div>
     </div>
 </EditForm>
 
 @code {
-    private bool _loading = false;
-    ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+    private EditContext EditContext;
+    private ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+    private ValidationMessageStore messages;
+
+    protected override void OnInitialized()
+    {
+        EditContext = new EditContext(productCategoryDto);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        messages = new ValidationMessageStore(EditContext);
+
+        base.OnInitialized();
+    }
 
     async Task ValidSubmit(EditContext editContext)
     {
-        _loading = true;
         ProductCategoryDto productCategory = editContext.Model as ProductCategoryDto;
 
         await _productCategoriesService.Create(productCategory);
-        _loading = false;
         Toaster.Add("Product Category added", MatToastType.Success, "Success");
 
         NavigationManager.NavigateTo("/productcategories");
+    }
+
+    private void EditContext_OnFieldChanged(object sender,
+                                               FieldChangedEventArgs e)
+    {
+        string fieldName = e.FieldIdentifier.FieldName;
+        ProductCategoryDto dto = e.FieldIdentifier.Model as ProductCategoryDto;
+        bool isUnique = _productCategoriesService.CheckIfUnique(fieldName, dto);
+
+        if(isUnique)
+        {
+            messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
+        }
+        else
+        {
+            messages.Clear(e.FieldIdentifier);
+        }
+
     }
 }

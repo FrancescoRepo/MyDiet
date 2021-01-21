@@ -9,7 +9,8 @@
 @inject IMatToaster Toaster
 
 <h3>Create ProductCategory</h3>
-<EditForm Model="@productDto" OnValidSubmit="ValidSubmit">
+<EditForm EditContext="@EditContext" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator/>
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -35,11 +36,16 @@
 </EditForm>
 
 @code {
-    ProductDto productDto = new ProductDto();
+    private EditContext EditContext;
+    private ProductDto productDto = new ProductDto();
+    private ValidationMessageStore messages;
 
     protected override async Task OnInitializedAsync()
     {
         productDto.ProductCategories = (await _productCategoryService.GetAll()).ToList().AsReadOnly();
+        EditContext = new EditContext(productDto);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        messages = new ValidationMessageStore(EditContext);
     }
 
     async Task ValidSubmit(EditContext editContext)
@@ -47,8 +53,25 @@
         ProductDto product = editContext.Model as ProductDto;
 
         await _productService.Create(product);
-        
+
         Toaster.Add("Product added", MatToastType.Success, "Success");
         NavigationManager.NavigateTo("/productcategories");
+    }
+
+    private void EditContext_OnFieldChanged(object sender,
+                                               FieldChangedEventArgs e)
+    {
+        string fieldName = e.FieldIdentifier.FieldName;
+        ProductDto dto = e.FieldIdentifier.Model as ProductDto;
+        bool isUnique = _productService.CheckIfUnique(fieldName, dto);
+
+        if (isUnique)
+        {
+            messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
+        }
+        else
+        {
+            messages.Clear(e.FieldIdentifier);
+        }
     }
 }

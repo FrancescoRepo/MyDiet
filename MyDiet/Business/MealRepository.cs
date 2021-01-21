@@ -16,6 +16,8 @@ namespace MyDiet.Business
         private readonly ApplicationDbContext _ctx;
         private readonly IMapper _mapper;
 
+        private const string NAME_PARAMETER = "Name";
+
         public MealRepository(ApplicationDbContext ctx, IMapper mapper)
         {
             _ctx = ctx;
@@ -74,6 +76,16 @@ namespace MyDiet.Business
             DietMeal dietMeal = await _ctx.DietMeals.Where(dm => dm.DietId == dietId && dm.MealId == mealId).FirstOrDefaultAsync();
             _ctx.Remove(dietMeal);
             await _ctx.SaveChangesAsync();
+        }
+
+        public bool CheckIfUnique(string parameter, MealDto entity)
+        {
+            if(parameter.Equals(NAME_PARAMETER))
+            {
+                return _ctx.Meals.Any(m => m.Name == entity.Name);
+            }
+
+            return false;
         }
     }
 }

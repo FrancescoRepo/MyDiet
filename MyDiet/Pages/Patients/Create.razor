@@ -7,7 +7,8 @@
 @inject IMatToaster Toaster
 
 <h3>Create Patient</h3>
-<EditForm Model="@patientDto" OnValidSubmit="ValidSubmit">
+<EditForm EditContext="@EditContext" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator />
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -39,39 +40,56 @@
                     <ValidationMessage For="@(() => patientDto.Weight)" />
                 </p>
                 <p>
-                    <MatTextField Label="Email" @bind-Value="@patientDto.Email" FullWidth="true" />
+                    <MatTextField Label="Email" @bind-Value="@patientDto.Email" FullWidth="true" IconTrailing="true" Icon="mail_outline" />
                     <ValidationMessage For="@(() => patientDto.Email)" />
                 </p>
                 <p>
                     <MatTextField Label="Phone" @bind-Value="@patientDto.Phone" FullWidth="true" />
                     <ValidationMessage For="@(() => patientDto.Phone)" />
                 </p>
-                @if (_loading)
-                {
-                    <MatProgressCircle Closed="true" />
-                }
-                else
-                {
-                    <MatButton Type="submit" Raised="true">Save</MatButton>
-                }
+                <MatButton Type="submit" Raised="true" Style="background: green;">Save</MatButton>
             </div>
         </div>
     </div>
 </EditForm>
 
 @code {
-    private bool _loading = false;
-    PatientDto patientDto = new PatientDto();
+    private EditContext EditContext;
+    private PatientDto patientDto = new PatientDto();
+    private ValidationMessageStore messages;
+
+    protected override void OnInitialized()
+    {
+        EditContext = new EditContext(patientDto);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        messages = new ValidationMessageStore(EditContext);
+        base.OnInitialized();
+    }
 
     async Task ValidSubmit(EditContext editContext)
     {
-        _loading = true;
         PatientDto patientDtoSubmitted = editContext.Model as PatientDto;
 
         await _patientsService.Create(patientDtoSubmitted);
-        _loading = false;
         Toaster.Add("Patient added", MatToastType.Success, "Success");
 
         NavigationManager.NavigateTo("/patients");
+    }
+
+    private void EditContext_OnFieldChanged(object sender,
+                                               FieldChangedEventArgs e)
+    {
+        string fieldName = e.FieldIdentifier.FieldName;
+        PatientDto dto = e.FieldIdentifier.Model as PatientDto;
+        bool isUnique = _patientsService.CheckIfUnique(fieldName, dto);
+
+        if (isUnique)
+        {
+            messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
+        }
+        else
+        {
+            messages.Clear(e.FieldIdentifier);
+        }
     }
 }

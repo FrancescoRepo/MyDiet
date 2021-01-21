@@ -7,7 +7,8 @@
 @inject IMatToaster Toaster
 
 <h3>Edit ProductCategory</h3>
-<EditForm Model="@productCategoryDto" OnValidSubmit="ValidSubmit">
+<EditForm EditContext="EditContext" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator/>
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -26,11 +27,16 @@
     [Parameter]
     public int id { get; set; }
 
-    ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+    private EditContext EditContext;
+    private ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+    private ValidationMessageStore messages;
 
     protected override async Task OnInitializedAsync()
     {
         productCategoryDto = await _productCategoriesService.Get(id);
+        EditContext = new EditContext(productCategoryDto);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        messages = new ValidationMessageStore(EditContext);
     }
 
     async Task ValidSubmit(EditContext editContext)
@@ -38,7 +44,7 @@
         ProductCategoryDto productCategory = editContext.Model as ProductCategoryDto;
 
         await _productCategoriesService.Update(id, productCategory);
-        
+
         Toaster.Add("Product Category Updated", MatToastType.Success, "Success");
         Back();
     }
@@ -46,5 +52,23 @@
     void Back()
     {
         NavigationManager.NavigateTo("/productcategories");
+    }
+
+    private void EditContext_OnFieldChanged(object sender,
+                                               FieldChangedEventArgs e)
+    {
+        messages.Clear();
+        string fieldName = e.FieldIdentifier.FieldName;
+        ProductCategoryDto dto = e.FieldIdentifier.Model as ProductCategoryDto;
+        bool isUnique = _productCategoriesService.CheckIfUnique(fieldName, dto);
+
+        if (isUnique)
+        {
+            messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
+        }
+        else
+        {
+            messages.Clear(e.FieldIdentifier);
+        }
     }
 }

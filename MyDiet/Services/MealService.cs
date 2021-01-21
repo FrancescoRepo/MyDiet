@@ -46,5 +46,10 @@ namespace MyDiet.Services
         {
             await _mealRepository.RemoveMealFromDiet(dietId, mealId);
         }
+
+        public bool CheckIfUnique(string parameter, MealDto entityDto)
+        {
+            return _mealRepository.CheckIfUnique(parameter, entityDto);
+        }
     }
 }

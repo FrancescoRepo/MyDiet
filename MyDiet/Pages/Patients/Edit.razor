@@ -7,7 +7,8 @@
 @inject IMatToaster Toaster
 
 <h3>Edit Patient: @patientDto.Name @patientDto.Surname</h3>
-<EditForm Model="@patientDto" OnValidSubmit="ValidSubmit">
+<EditForm EditContext="@EditContext" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator/>
     <div class="mat-layou-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -59,24 +60,24 @@
     [Parameter]
     public int id { get; set; }
 
-    private bool _loading = false;
-
-    PatientDto patientDto = new PatientDto();
+    private EditContext EditContext;
+    private PatientDto patientDto = new PatientDto();
+    private ValidationMessageStore messages;
 
     protected override async Task OnInitializedAsync()
     {
         patientDto = await _patientsService.Get(id);
+        EditContext = new EditContext(patientDto);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        messages = new ValidationMessageStore(EditContext);
     }
 
     async Task ValidSubmit(EditContext editContext)
     {
-        _loading = true;
-
         PatientDto patientDtoSubmitted = editContext.Model as PatientDto;
 
         await Task.Run(() => _patientsService.Update(id, patientDtoSubmitted));
 
-        _loading = false;
         Toaster.Add("Patient updated", MatToastType.Success, "Success");
 
         Back();
@@ -85,5 +86,22 @@
     void Back()
     {
         NavigationManager.NavigateTo("/patients");
+    }
+
+    private void EditContext_OnFieldChanged(object sender,
+                                               FieldChangedEventArgs e)
+    {
+        string fieldName = e.FieldIdentifier.FieldName;
+        PatientDto dto = e.FieldIdentifier.Model as PatientDto;
+        bool isUnique = _patientsService.CheckIfUnique(fieldName, dto);
+
+        if (isUnique)
+        {
+            messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
+        }
+        else
+        {
+            messages.Clear(e.FieldIdentifier);
+        }
     }
 }

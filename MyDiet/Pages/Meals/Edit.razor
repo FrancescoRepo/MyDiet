@@ -7,7 +7,8 @@
 @inject IMatToaster Toaster
 
 <h3>Edit Meal</h3>
-<EditForm Model="@mealDto" OnValidSubmit="ValidSubmit">
+<EditForm EditContext="EditContext" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator/>
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -30,11 +31,16 @@
     [Parameter]
     public int id { get; set; }
 
-    MealDto mealDto = new MealDto();
+    private EditContext EditContext;
+    private MealDto mealDto = new MealDto();
+    private ValidationMessageStore messages;
 
     protected override async Task OnInitializedAsync()
     {
         mealDto = await _mealService.Get(id);
+        EditContext = new EditContext(mealDto);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        messages = new ValidationMessageStore(EditContext);
     }
 
     async Task ValidSubmit(EditContext editContext)
@@ -50,5 +56,22 @@
     void Back()
     {
         NavigationManager.NavigateTo("/meals");
+    }
+
+    private void EditContext_OnFieldChanged(object sender,
+                                               FieldChangedEventArgs e)
+    {
+        string fieldName = e.FieldIdentifier.FieldName;
+        MealDto dto = e.FieldIdentifier.Model as MealDto;
+        bool isUnique = _mealService.CheckIfUnique(fieldName, dto);
+
+        if (isUnique)
+        {
+            messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
+        }
+        else
+        {
+            messages.Clear(e.FieldIdentifier);
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace MyDiet.Business.IRepository
         public Task Create(T entity);
         public Task Update(int id, T entity);
         public Task Delete(int id);
+        public bool CheckIfUnique(string parameter, T entity);
     }
 }

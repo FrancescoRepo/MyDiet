@@ -17,6 +17,7 @@ namespace MyDiet.Business
         private readonly IMapper _mapper;
         private readonly IPatientRepository _patientRepository;
 
+        private const string NAME_PARAMETER = "Name";
         public DietRepository(ApplicationDbContext ctx, IMapper mapper, IPatientRepository patientRepository)
         {
             _ctx = ctx;
@@ -86,6 +87,16 @@ namespace MyDiet.Business
         {
             var diet = await _ctx.Diets.Include(d => d.DietMeal).ThenInclude(dm => dm.Meal).FirstOrDefaultAsync(d => d.Id == id);
             return _mapper.Map<Diet, DietDto>(diet);
+        }
+
+        public bool CheckIfUnique(string parameter, DietDto entity)
+        {
+            if(parameter.Equals(NAME_PARAMETER))
+            {
+                return _ctx.Diets.Any(d => d.Name == entity.Name);
+            }
+
+            return false;
         }
     }
 }

@@ -10,5 +10,6 @@ namespace MyDiet.Services.IService
         public Task Create(T entityDto);
         public Task Update(int id, T entityDto);
         public Task Delete(int id);
+        public bool CheckIfUnique(string parameter, T entityDto);
     }
 }
