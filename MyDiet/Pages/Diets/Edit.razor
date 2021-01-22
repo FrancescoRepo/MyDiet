@@ -9,31 +9,41 @@
 @inject IMatToaster Toaster
 
 <h3>Edit Diet</h3>
-<EditForm Model="@dietDto" OnValidSubmit="ValidSubmit">
-    <DataAnnotationsValidator/>
-    <div class="mat-layout-grid">
-        <div class="mat-layout-grid-inner">
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-                <p>
-                    <MatTextField Label="Diet Name" @bind-Value="@dietDto.Name" FullWidth="true" />
-                    <ValidationMessage For="@(() => dietDto.Name)" />
-                </p>
-                <p>
-                    <MatTextField Label="Product Name" @bind-Value="@dietDto.Description" FullWidth="true" />
-                    <ValidationMessage For="@(() => dietDto.Description)" />
-                </p>
-                <p>
-                    <MatSelectItem Items="@dietDto.Patients" @bind-Value="@dietDto.PatientDto">
-                        <ItemTemplate Context="patientCategoryContext">
-                            <span>@patientCategoryContext?.Name @patientCategoryContext?.Surname </span>
-                        </ItemTemplate>
-                    </MatSelectItem>
-                </p>
-                <MatButton Type="submit" Raised="true">Save</MatButton>
+@if (EditContext == null)
+{
+    <h3 class="mat-subtitle1">Loading</h3>
+    <MatProgressBar Indeterminate="true"/>
+}
+else
+{
+    <EditForm EditContext="@EditContext" OnValidSubmit="ValidSubmit">
+        <DataAnnotationsValidator />
+        <div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                    <p>
+                        <MatTextField Label="Diet Name" @bind-Value="@dietDto.Name" FullWidth="true" />
+                        <ValidationMessage For="@(() => dietDto.Name)" />
+                    </p>
+                    <p>
+                        <MatTextField Label="Product Name" @bind-Value="@dietDto.Description" FullWidth="true" />
+                        <ValidationMessage For="@(() => dietDto.Description)" />
+                    </p>
+                    <p>
+                        <MatSelectItem Items="@dietDto.Patients" @bind-Value="@dietDto.PatientDto">
+                            <ItemTemplate Context="patientCategoryContext">
+                                <span>@patientCategoryContext?.Name @patientCategoryContext?.Surname </span>
+                            </ItemTemplate>
+                        </MatSelectItem>
+                    </p>
+                    <MatButton Type="submit" Raised="true" Style="background: green;" Icon="save">Save</MatButton>
+                    <MatButton Type="button" Raised="true" Style="background: red;" @onclick="Back" Icon="block">Cancel</MatButton>
+                </div>
             </div>
         </div>
-    </div>
-</EditForm>
+    </EditForm>
+}
+
 
 @code {
     [Parameter]
@@ -46,8 +56,8 @@
     protected override async Task OnInitializedAsync()
     {
         dietDto = await _dietService.Get(id);
-        dietDto.Patients = (await _patientService.GetAll()).ToList().AsReadOnly();
         EditContext = new EditContext(dietDto);
+        dietDto.Patients = (await _patientService.GetAll()).ToList().AsReadOnly();
         EditContext.OnFieldChanged += EditContext_OnFieldChanged;
         messages = new ValidationMessageStore(EditContext);
     }
@@ -59,6 +69,11 @@
         await _dietService.Update(id, diet);
 
         Toaster.Add("Diet updated", MatToastType.Success, "Success");
+        NavigationManager.NavigateTo("/diets");
+    }
+
+    void Back()
+    {
         NavigationManager.NavigateTo("/diets");
     }
 

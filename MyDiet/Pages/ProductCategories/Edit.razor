@@ -7,21 +7,30 @@
 @inject IMatToaster Toaster
 
 <h3>Edit ProductCategory</h3>
-<EditForm EditContext="EditContext" OnValidSubmit="ValidSubmit">
-    <DataAnnotationsValidator/>
-    <div class="mat-layout-grid">
-        <div class="mat-layout-grid-inner">
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-                <p>
-                    <MatTextField Label="Description" @bind-Value="@productCategoryDto.Description" FullWidth="true" />
-                    <ValidationMessage For="@(() => productCategoryDto.Description)" />
-                </p>
-                <MatButton Style="background: green;" Type="submit" Raised="true">Update</MatButton>
-                <MatButton Style="background: red;" Type="button" Raised="true" @onclick="Back">Cancel</MatButton>
+@if (EditContext == null)
+{
+    <h3 class="mat-subtitle1">Loading</h3>
+    <MatProgressBar Indeterminate="true" />
+}
+else
+{
+    <EditForm EditContext="EditContext" OnSubmit="ValidSubmit">
+        <DataAnnotationsValidator />
+        <div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                    <p>
+                        <MatTextField Label="Description" @bind-Value="@productCategoryDto.Description" FullWidth="true" />
+                        <ValidationMessage For="@(() => productCategoryDto.Description)" />
+                    </p>
+                    <MatButton Type="submit" Raised="true" Style="background: green;" Icon="save">Save</MatButton>
+                    <MatButton Type="button" Raised="true" Style="background: red;" @onclick="Back" Icon="block">Cancel</MatButton>
+                </div>
             </div>
         </div>
-    </div>
-</EditForm>
+    </EditForm>
+}
+
 
 @code {
     [Parameter]
@@ -57,7 +66,6 @@
     private void EditContext_OnFieldChanged(object sender,
                                                FieldChangedEventArgs e)
     {
-        messages.Clear();
         string fieldName = e.FieldIdentifier.FieldName;
         ProductCategoryDto dto = e.FieldIdentifier.Model as ProductCategoryDto;
         bool isUnique = _productCategoriesService.CheckIfUnique(fieldName, dto);

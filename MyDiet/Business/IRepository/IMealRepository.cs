@@ -5,7 +5,7 @@ namespace MyDiet.Business.IRepository
 {
     public interface IMealRepository : IRepository<MealDto>
     {
-        public Task AddMealToDiet(int dietId, MealDto mealDto);
+        public Task AddMealToDiet(int dietId, int mealId);
         public Task RemoveMealFromDiet(int dietId, int mealId);
     }
 }

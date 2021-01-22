@@ -8,34 +8,43 @@
 @inject IMatToaster Toaster
 
 <h3>Edit ProductCategory</h3>
-<EditForm EditContext="@EditContext" OnSubmit="ValidSubmit">
-    <DataAnnotationsValidator/>
-    <div class="mat-layout-grid">
-        <div class="mat-layout-grid-inner">
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-                <p>
-                    <MatTextField Label="Product Name" @bind-Value="@productDto.Name" FullWidth="true" />
-                    <ValidationMessage For="@(() => productDto.Name)" />
-                </p>
-                <p>
-                    <MatTextField Label="Description" @bind-Value="@productDto.Description" FullWidth="true" />
-                    <ValidationMessage For="@(() => productDto.Description)" />
-                </p>
-                <p>
-                    <MatSelectItem Items="@productDto.ProductCategories" @bind-Value="@productDto.ProductCategory" FullWidth="true" Label="Product Category">
-                        <ItemTemplate Context="productCategoryContext">
-                            <span>@productCategoryContext?.Description</span>
-                        </ItemTemplate>
-                    </MatSelectItem>
-                </p>
-                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
-                    <MatButton Type="submit" Raised="true" Style="background: green;">Update</MatButton>
-                    <MatButton Type="button" Raised="true" Style="background: red;" @onclick="Back">Cancel</MatButton>
+@if (EditContext == null)
+{
+    <h3 class="mat-subtitle1">Loading</h3>
+    <MatProgressBar Indeterminate="true" />
+}
+else
+{
+    <EditForm EditContext="@EditContext" OnSubmit="ValidSubmit">
+        <DataAnnotationsValidator />
+        <div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                    <p>
+                        <MatTextField Label="Product Name" @bind-Value="@productDto.Name" FullWidth="true" />
+                        <ValidationMessage For="@(() => productDto.Name)" />
+                    </p>
+                    <p>
+                        <MatTextField Label="Description" @bind-Value="@productDto.Description" FullWidth="true" />
+                        <ValidationMessage For="@(() => productDto.Description)" />
+                    </p>
+                    <p>
+                        <MatSelectItem Items="@productDto.ProductCategories" @bind-Value="@productDto.ProductCategory" FullWidth="true" Label="Product Category">
+                            <ItemTemplate Context="productCategoryContext">
+                                <span>@productCategoryContext?.Description</span>
+                            </ItemTemplate>
+                        </MatSelectItem>
+                    </p>
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <MatButton Type="submit" Raised="true" Style="background: green;" Icon="save">Save</MatButton>
+                        <MatButton Type="button" Raised="true" Style="background: red;" @onclick="Back" Icon="block">Cancel</MatButton>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</EditForm>
+    </EditForm>
+}
+
 
 @code {
     [Parameter]

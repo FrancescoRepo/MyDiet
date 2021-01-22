@@ -7,54 +7,63 @@
 @inject IMatToaster Toaster
 
 <h3>Edit Patient: @patientDto.Name @patientDto.Surname</h3>
-<EditForm EditContext="@EditContext" OnValidSubmit="ValidSubmit">
-    <DataAnnotationsValidator/>
-    <div class="mat-layou-grid">
-        <div class="mat-layout-grid-inner">
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-                <p>
-                    <MatTextField Label="Fiscal Code" @bind-Value="@patientDto.FiscalCode" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientDto.FiscalCode)" />
-                </p>
-                <p>
-                    <MatTextField Label="Name" @bind-Value="@patientDto.Name" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientDto.Name)" />
-                </p>
-                <p>
-                    <MatTextField Label="Surname" @bind-Value="@patientDto.Surname" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientDto.Surname)" />
-                </p>
-                <p>
-                    <MatSelect Label="Gender" @bind-Value="@patientDto.Gender" FullWidth="true">
-                        <MatOptionString Value="male">Male</MatOptionString>
-                        <MatOptionString Value="female">Female</MatOptionString>
-                    </MatSelect>
-                    <ValidationMessage For="@(() => patientDto.Gender)" />
-                </p>
-                <p>
-                    <MatTextField Label="Age" @bind-Value="@patientDto.Age" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientDto.Age)" />
-                </p>
-                <p>
-                    <MatTextField Label="Weight" @bind-Value="@patientDto.Weight" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientDto.Weight)" />
-                </p>
-                <p>
-                    <MatTextField Label="Email" @bind-Value="@patientDto.Email" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientDto.Email)" />
-                </p>
-                <p>
-                    <MatTextField Label="Phone" @bind-Value="@patientDto.Phone" FullWidth="true" />
-                    <ValidationMessage For="@(() => patientDto.Phone)" />
-                </p>
-            </div>
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
-                <MatButton Type="submit" Raised="true" Style="background: green;">Update</MatButton>
-                <MatButton Raised="true" Type="button" Style="background: red;" @onclick="Back">Cancel</MatButton>
+@if (EditContext == null)
+{
+    <h3 class="mat-subtitle1">Loading</h3>
+    <MatProgressBar Indeterminate="true" />
+}
+else
+{
+    <EditForm EditContext="@EditContext" OnValidSubmit="ValidSubmit">
+        <DataAnnotationsValidator />
+        <div class="mat-layou-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                    <p>
+                        <MatTextField Label="Fiscal Code" @bind-Value="@patientDto.FiscalCode" FullWidth="true" />
+                        <ValidationMessage For="@(() => patientDto.FiscalCode)" />
+                    </p>
+                    <p>
+                        <MatTextField Label="Name" @bind-Value="@patientDto.Name" FullWidth="true" />
+                        <ValidationMessage For="@(() => patientDto.Name)" />
+                    </p>
+                    <p>
+                        <MatTextField Label="Surname" @bind-Value="@patientDto.Surname" FullWidth="true" />
+                        <ValidationMessage For="@(() => patientDto.Surname)" />
+                    </p>
+                    <p>
+                        <MatSelect Label="Gender" @bind-Value="@patientDto.Gender" FullWidth="true">
+                            <MatOptionString Value="male">Male</MatOptionString>
+                            <MatOptionString Value="female">Female</MatOptionString>
+                        </MatSelect>
+                        <ValidationMessage For="@(() => patientDto.Gender)" />
+                    </p>
+                    <p>
+                        <MatTextField Label="Age" @bind-Value="@patientDto.Age" FullWidth="true" />
+                        <ValidationMessage For="@(() => patientDto.Age)" />
+                    </p>
+                    <p>
+                        <MatTextField Label="Weight" @bind-Value="@patientDto.Weight" FullWidth="true" />
+                        <ValidationMessage For="@(() => patientDto.Weight)" />
+                    </p>
+                    <p>
+                        <MatTextField Label="Email" @bind-Value="@patientDto.Email" FullWidth="true" />
+                        <ValidationMessage For="@(() => patientDto.Email)" />
+                    </p>
+                    <p>
+                        <MatTextField Label="Phone" @bind-Value="@patientDto.Phone" FullWidth="true" />
+                        <ValidationMessage For="@(() => patientDto.Phone)" />
+                    </p>
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                    <MatButton Type="submit" Raised="true" Style="background: green;" Icon="save">Save</MatButton>
+                    <MatButton Type="button" Raised="true" Style="background: red;" @onclick="Back" Icon="block">Cancel</MatButton>
+                </div>
             </div>
         </div>
-    </div>
-</EditForm>
+    </EditForm>
+}
+
 
 @code {
     [Parameter]

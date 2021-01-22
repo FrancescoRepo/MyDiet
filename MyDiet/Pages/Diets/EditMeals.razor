@@ -40,40 +40,43 @@
             </div>
         }
 
-        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            <MatAccordion>
-                <MatExpansionPanel @bind-Expanded="@panelOpenState">
-                    <MatExpansionPanelSummary>
-                        <MatExpansionPanelHeader>
-                            Add meal to diet
-                        </MatExpansionPanelHeader>
-                    </MatExpansionPanelSummary>
-                    <MatExpansionPanelDetails>
-                        <p>
-                            <MatSelectItem Items="@dietDto.Meals" @bind-Value="@mealDto" FullWidth="true">
-                                <ItemTemplate Context="mealCategoryContext">
-                                    <span>@mealCategoryContext?.Name </span>
-                                </ItemTemplate>
-                            </MatSelectItem>
-                        </p>
-                        <p>
-                            <MatButton Style="background: green;" Raised="true" Type="button" @onclick="ValidSubmit">Save</MatButton>
-                        </p>
-                    </MatExpansionPanelDetails>
-                </MatExpansionPanel>
-            </MatAccordion>
-        </div>
     </div>
 </div>
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Choose meal</MatDialogTitle>
+    <MatDialogContent>
+        <p>Meals</p>
+        <MatSelect TValue="string" Outlined="true" ValueChanged="(i) => OnChangeMeal(i)">
+            @foreach(var meal in dietDto.Meals)
+            {
+                <MatOptionString Value="@meal.Id.ToString()">@meal.Name</MatOptionString>
+            }
+        </MatSelect>
+    </MatDialogContent>
+
+    <MatDialogActions>
+        <MatButton @onclick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
+        <MatButton Style="background: green;" Raised="true" Type="button" @onclick="ValidSubmit">Save</MatButton>
+    </MatDialogActions>
+</MatDialog>
+<MatFAB Class="app-fab--absolute" Icon="@MatIconNames.Add" Label="Add Meal" Style="background: green;" @onclick="OpenDialog"></MatFAB>
+
+<style>
+    .app-fab--absolute {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+    }
+</style>
 
 @code {
     [Parameter]
     public int id { get; set; }
 
-    private bool panelOpenState;
+    private bool dialogIsOpen = false;
 
     private DietDto dietDto = new DietDto();
-    private MealDto mealDto = new MealDto();
+    private int mealId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,8 +91,14 @@
 
     async Task ValidSubmit()
     {
-        await _mealService.AddMealToDiet(id, mealDto);
+        await _mealService.AddMealToDiet(id, mealId);
         await getDietMeals();
+        dialogIsOpen = false;
+    }
+
+    void OpenDialog()
+    {
+        dialogIsOpen = true;
     }
 
     async Task Remove(int mealId)
@@ -101,5 +110,10 @@
             await getDietMeals();
             Toaster.Add("Meal Deleted", MatToastType.Success, "Success");
         }
+    }
+
+    private void OnChangeMeal(string mealSelected)
+    {
+        mealId = int.Parse(mealSelected);
     }
 }

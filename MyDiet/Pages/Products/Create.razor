@@ -42,8 +42,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        productDto.ProductCategories = (await _productCategoryService.GetAll()).ToList().AsReadOnly();
         EditContext = new EditContext(productDto);
+        productDto.ProductCategories = (await _productCategoryService.GetAll()).ToList().AsReadOnly();
+
         EditContext.OnFieldChanged += EditContext_OnFieldChanged;
         messages = new ValidationMessageStore(EditContext);
     }

@@ -58,12 +58,11 @@ namespace MyDiet.Business
             await _ctx.SaveChangesAsync();
         }
 
-        public async Task AddMealToDiet(int dietId, MealDto mealDto)
+        public async Task AddMealToDiet(int dietId, int mealId)
         {
-            //Diet dietFromDb = await _ctx.Diets.Include(d => d.DietMeal).FirstOrDefaultAsync(d => d.Id == dietId);
             DietMeal dietMeal = new DietMeal
             {
-                MealId = mealDto.Id,
+                MealId = mealId,
                 DietId = dietId
             };
 

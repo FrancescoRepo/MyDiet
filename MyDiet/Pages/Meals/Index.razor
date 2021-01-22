@@ -11,7 +11,7 @@
 
 <div class="mat-layout-grid">
     <div>
-        <a href="/meals/create" class="btn btn-success btn-block mb-3"><i class="fas fa-plus"></i> Add Meal</a>
+        <MatButton Raised="true" Type="button" Style="background: green;" Icon="add_box" @onclick="Create">Add Meal</MatButton>
     </div>
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
@@ -27,14 +27,16 @@
                         <td>@context.Name</td>
                         <td>@context.Description</td>
                         <td>
-                            <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
-                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
+                            <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))" Style="background: orange;" Icon="create">Edit</MatButton>
+                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))" Icon="delete_sweep">Remove</MatButton>
                         </td>
                     </MatTableRow>
                 </MatTable>
-            } else
+            }
+            else
             {
-                <Jumbotron Message="No meals addedd yet"/>
+                <br />
+                <Jumbotron Message="No meals addedd yet" />
             }
 
         </div>
@@ -47,6 +49,11 @@
     protected override async Task OnInitializedAsync()
     {
         meals = await _mealService.GetAll();
+    }
+
+    void Create()
+    {
+        NavigationManager.NavigateTo($"/meals/create");
     }
 
     void Edit(int id)

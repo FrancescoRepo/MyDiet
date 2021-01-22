@@ -36,13 +36,14 @@
                         <td>@context.Email</td>
                         <td>@context.Phone</td>
                         <td>
-                            <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))">Edit</MatButton>
-                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))">Remove</MatButton>
+                            <MatButton Raised="true" @onclick="@(_ => Edit(@context.Id))" Style="background: orange;" Icon="create">Edit</MatButton>
+                            <MatButton Raised="true" Style="background: red;" @onclick="@(_ => Remove(@context))" Icon="delete_sweep">Remove</MatButton>
                         </td>
                     </MatTableRow>
                 </MatTable>
             } else
             {
+                <br />
                 <Jumbotron Message="No Patients added yet"/>
             }
         </div>

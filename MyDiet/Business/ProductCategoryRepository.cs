@@ -63,7 +63,23 @@ namespace MyDiet.Business
         {
             if(parameter.Equals(DESCRIPTION_PARAMETER))
             {
-                return _ctx.ProductCategories.Any(pc => pc.Description == entity.Description);
+                if(entity.Id == 0)
+                {
+                    return _ctx.ProductCategories.Any(pc => pc.Description == entity.Description);
+                } 
+                else
+                {
+                    ProductCategory productCategory = _ctx.ProductCategories.FirstOrDefault(pc => pc.Description == entity.Description);
+                    if(productCategory != null)
+                    {
+                        if(productCategory.Id == entity.Id)
+                        {
+                            return (productCategory.Description != entity.Description);
+                        }
+                        return true;
+                    }
+                    return false;
+                }
             }
 
             return false;

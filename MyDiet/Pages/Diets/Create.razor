@@ -42,8 +42,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        dietDto.Patients = (await _patientService.GetAll()).ToList().AsReadOnly();
         EditContext = new EditContext(dietDto);
+        dietDto.Patients = (await _patientService.GetAll()).ToList().AsReadOnly();
         EditContext.OnFieldChanged += EditContext_OnFieldChanged;
         messages = new ValidationMessageStore(EditContext);
     }
