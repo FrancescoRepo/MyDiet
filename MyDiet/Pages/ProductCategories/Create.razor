@@ -16,7 +16,8 @@
                     <MatTextField Label="Description" @bind-Value="@productCategoryDto.Description" FullWidth="true" />
                     <ValidationMessage For="@(() => productCategoryDto.Description)" />
                 </p>
-                <MatButton Type="submit" Raised="true" Style="background: green;">Save</MatButton>
+                <MatButton Type="submit" Raised="true" Style="background: green;" Icon="save">Save</MatButton>
+                <MatButton Style="background: red;" Type="button" Raised="true" @onclick="Back" Icon="block">Cancel</MatButton>
             </div>
         </div>
     </div>
@@ -46,6 +47,11 @@
         NavigationManager.NavigateTo("/productcategories");
     }
 
+    void Back()
+    {
+        NavigationManager.NavigateTo("/productcategories");
+    }
+
     private void EditContext_OnFieldChanged(object sender,
                                                FieldChangedEventArgs e)
     {
@@ -53,7 +59,7 @@
         ProductCategoryDto dto = e.FieldIdentifier.Model as ProductCategoryDto;
         bool isUnique = _productCategoriesService.CheckIfUnique(fieldName, dto);
 
-        if(isUnique)
+        if (isUnique)
         {
             messages.Add(e.FieldIdentifier, $"{e.FieldIdentifier.FieldName} must be unique");
         }

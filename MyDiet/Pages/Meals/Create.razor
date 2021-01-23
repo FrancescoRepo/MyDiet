@@ -20,8 +20,8 @@
                     <MatTextField Label="Description" @bind-Value="@mealDto.Description" FullWidth="true" />
                     <ValidationMessage For="@(() => mealDto.Description)" />
                 </p>
-                <MatButton Style="background: green;" Type="submit" Raised="true">Create</MatButton>
-                <MatButton Style="background: red;" Type="button" Raised="true" @onclick="Back">Cancel</MatButton>
+                <MatButton Style="background: green;" Type="submit" Raised="true" Icon="save">Create</MatButton>
+                <MatButton Style="background: red;" Type="button" Raised="true" @onclick="Back" Icon="block">Cancel</MatButton>
             </div>
         </div>
     </div>

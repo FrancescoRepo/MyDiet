@@ -32,11 +32,7 @@
         else
         {
             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-                <div class="jumbotron jumbotron-fluid">
-                    <div class="container">
-                        <h1 class="display-4 text-center">No Meals present in this diet</h1>
-                    </div>
-                </div>
+                <Jumbotron Message="No Meals present in this diet"/>
             </div>
         }
 
@@ -55,8 +51,8 @@
     </MatDialogContent>
 
     <MatDialogActions>
+        <MatButton @onclick="ValidSubmit" Icon="add_circle">Add</MatButton>
         <MatButton @onclick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
-        <MatButton Style="background: green;" Raised="true" Type="button" @onclick="ValidSubmit">Save</MatButton>
     </MatDialogActions>
 </MatDialog>
 <MatFAB Class="app-fab--absolute" Icon="@MatIconNames.Add" Label="Add Meal" Style="background: green;" @onclick="OpenDialog"></MatFAB>
@@ -91,9 +87,18 @@
 
     async Task ValidSubmit()
     {
-        await _mealService.AddMealToDiet(id, mealId);
-        await getDietMeals();
-        dialogIsOpen = false;
+        bool canAdd = await _mealService.AddMealToDiet(id, mealId);
+        if(canAdd)
+        {
+            dialogIsOpen = false;
+            Toaster.Add("Meal added", MatToastType.Success, "Success");
+            StateHasChanged();
+        }
+        else
+        {
+            dialogIsOpen = false;
+            Toaster.Add("Meal is already present in ths diet", MatToastType.Warning, "Error");
+        }
     }
 
     void OpenDialog()

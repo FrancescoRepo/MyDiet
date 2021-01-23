@@ -32,7 +32,7 @@ else
                         <ValidationMessage For="@(() => patientDto.Surname)" />
                     </p>
                     <p>
-                        <MatSelect Label="Gender" @bind-Value="@patientDto.Gender" FullWidth="true">
+                        <MatSelect Label="Gender" @bind-Value="@patientDto.Gender" FullWidth="true" Outlined="true">
                             <MatOptionString Value="male">Male</MatOptionString>
                             <MatOptionString Value="female">Female</MatOptionString>
                         </MatSelect>

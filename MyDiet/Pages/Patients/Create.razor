@@ -25,7 +25,7 @@
                     <ValidationMessage For="@(() => patientDto.Surname)" />
                 </p>
                 <p>
-                    <MatSelect Label="Gender" @bind-Value="@patientDto.Gender" FullWidth="true">
+                    <MatSelect Label="Gender" @bind-Value="@patientDto.Gender" FullWidth="true" Outlined="true">
                         <MatOptionString Value="male">Male</MatOptionString>
                         <MatOptionString Value="female">Female</MatOptionString>
                     </MatSelect>
@@ -47,7 +47,8 @@
                     <MatTextField Label="Phone" @bind-Value="@patientDto.Phone" FullWidth="true" />
                     <ValidationMessage For="@(() => patientDto.Phone)" />
                 </p>
-                <MatButton Type="submit" Raised="true" Style="background: green;">Save</MatButton>
+                <MatButton Type="submit" Raised="true" Style="background: green;" Icon="save">Save</MatButton>
+                <MatButton Style="background: red;" Type="button" Raised="true" @onclick="Back" Icon="block">Cancel</MatButton>
             </div>
         </div>
     </div>
@@ -73,6 +74,11 @@
         await _patientsService.Create(patientDtoSubmitted);
         Toaster.Add("Patient added", MatToastType.Success, "Success");
 
+        NavigationManager.NavigateTo("/patients");
+    }
+
+    void Back()
+    {
         NavigationManager.NavigateTo("/patients");
     }
 

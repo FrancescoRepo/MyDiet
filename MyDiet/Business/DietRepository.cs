@@ -43,6 +43,7 @@ namespace MyDiet.Business
         public async Task<DietDto> Get(int id)
         {
             Diet diet = await _ctx.Diets.Include(d => d.DietMeal).FirstOrDefaultAsync(d => d.Id == id);
+            
             Patient patientFromDb = await _ctx.Patients.Include(p => p.Diet).FirstOrDefaultAsync(p => p.DietId == id);
             PatientDto patientDto = _mapper.Map<Patient, PatientDto>(patientFromDb);
             DietDto dietDto = new DietDto
@@ -85,7 +86,7 @@ namespace MyDiet.Business
 
         public async Task<DietDto> GetAllDietMeals(int id)
         {
-            var diet = await _ctx.Diets.Include(d => d.DietMeal).ThenInclude(dm => dm.Meal).FirstOrDefaultAsync(d => d.Id == id);
+            var diet = await _ctx.Diets.Include(d => d.DietMeal).ThenInclude(dm => dm.Meal).ThenInclude(m => m.MealProduct).ThenInclude(mp => mp.Product).FirstOrDefaultAsync(d => d.Id == id);
             return _mapper.Map<Diet, DietDto>(diet);
         }
 

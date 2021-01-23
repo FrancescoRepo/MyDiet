@@ -58,16 +58,24 @@ namespace MyDiet.Business
             await _ctx.SaveChangesAsync();
         }
 
-        public async Task AddMealToDiet(int dietId, int mealId)
+        public async Task<bool> AddMealToDiet(int dietId, int mealId)
         {
-            DietMeal dietMeal = new DietMeal
+            bool exists = await _ctx.DietMeals.AnyAsync(dm => dm.DietId == dietId && dm.MealId == mealId);
+            if(!exists)
             {
-                MealId = mealId,
-                DietId = dietId
-            };
+                DietMeal dietMeal = new DietMeal
+                {
+                    MealId = mealId,
+                    DietId = dietId
+                };
 
-            await _ctx.AddAsync(dietMeal);
-            await _ctx.SaveChangesAsync();
+                await _ctx.AddAsync(dietMeal);
+                await _ctx.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
         }
 
         public async Task RemoveMealFromDiet(int dietId, int mealId)
@@ -85,6 +93,33 @@ namespace MyDiet.Business
             }
 
             return false;
+        }
+
+        public async Task<bool> AddProductToMeal(int mealId, int productId)
+        {
+            bool exists = await _ctx.MealProducts.AnyAsync(mp => mp.MealId == mealId && mp.ProductId == productId);
+            if(!exists)
+            {
+                MealProduct mealProduct = new MealProduct
+                {
+                    MealId = mealId,
+                    ProductId = productId
+                };
+                await _ctx.AddAsync(mealProduct);
+                await _ctx.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task RemoveProductFromMeal(int mealId, int productId)
+        {
+            MealProduct mealProduct = await _ctx.MealProducts.FirstOrDefaultAsync(mp => mp.MealId == mealId && mp.ProductId == productId);
+            _ctx.Remove(mealProduct);
+
+            await _ctx.SaveChangesAsync();
         }
     }
 }

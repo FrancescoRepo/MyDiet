@@ -1,0 +1,137 @@
+﻿@using MyDiet.Models.Dtos
+@using MyDiet.Services.IService
+
+@page "/diets/{id:int}/products/edit"
+@inject IDietService _dietService
+@inject IProductService _productService
+@inject IMealService _mealService
+@inject IMatDialogService MatDialogService
+@inject IMatToaster Toaster
+
+<h3>Meals Diet #@id</h3>
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        @if (dietDto.DietMeal.Count > 0)
+        {
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                @foreach (var dietMeal in dietDto.DietMeal)
+                {
+                    <h3 class="mat-subtitle1"><span style="font-weight: bold;">Meal: </span>@dietMeal.Meal.Name</h3>
+                    @if (dietMeal.Meal.MealProduct.Count > 0)
+                    {
+                        @foreach (var mealProduct in dietMeal.Meal.MealProduct)
+                        {
+                            <MatListItem Style="justify-content: space-between">@mealProduct.Product.Name <span><MatIconButton Icon="clear" @onclick="( _ => RemoveProduct(mealProduct.Product.Id, dietMeal.Meal.Id))"></MatIconButton></span></MatListItem>
+                            <MatDivider></MatDivider>
+                        }
+                    }
+                    else
+                    {
+                        <MatListItem>No product for this meal</MatListItem>
+                    }
+                    <br />
+                }
+            </div>
+        }
+        else
+        {
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <Jumbotron Message="No Meals present in this diet" />
+            </div>
+        }
+
+    </div>
+</div>
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Choose meal</MatDialogTitle>
+    <MatDialogContent>
+        <p>Meals</p>
+        <MatSelect TValue="string" Outlined="true" ValueChanged="(i) => OnChangeMeal(i)">
+            @foreach (var dietMeal in dietDto.DietMeal)
+            {
+                <MatOptionString Value="@dietMeal.Meal.Id.ToString()">@dietMeal.Meal.Name</MatOptionString>
+            }
+        </MatSelect>
+        <br />
+        <p>Products</p>
+        <MatSelect TValue="string" Outlined="true" ValueChanged="(i) => OnChangeProduct(i)">
+            @foreach (var product in dietDto.Products)
+            {
+                <MatOptionString Value="@product.Id.ToString()">@product.Name</MatOptionString>
+            }
+        </MatSelect>
+    </MatDialogContent>
+
+    <MatDialogActions>
+        <MatButton @onclick="ValidSubmit" Icon="add_circle">Add</MatButton>
+        <MatButton @onclick="@(e => { dialogIsOpen = false; })" Icon="block">Cancel</MatButton>
+    </MatDialogActions>
+</MatDialog>
+<MatFAB Class="app-fab--absolute" Icon="@MatIconNames.Add" Label="Add Meal" Style="background: green;" @onclick="OpenDialog"></MatFAB>
+
+<style>
+    .app-fab--absolute {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private bool dialogIsOpen = false;
+
+    private DietDto dietDto = new DietDto();
+    private int mealId;
+    private int productId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dietDto = await _dietService.GetAllDietMeals(id);
+        dietDto.Products = (await _productService.GetAll()).ToList().AsReadOnly();
+    }
+
+    async Task ValidSubmit()
+    {
+        bool canAdd = await _mealService.AddProductToMeal(mealId, productId);
+        if (canAdd)
+        {
+            dialogIsOpen = false;
+            Toaster.Add("Product Added", MatToastType.Success, "Success");
+            StateHasChanged();
+        }
+        else
+        {
+            dialogIsOpen = false;
+            Toaster.Add("Product already present in the selected meal", MatToastType.Warning, "Error");
+        }
+    }
+
+    void OpenDialog()
+    {
+        dialogIsOpen = true;
+    }
+
+    async Task RemoveProduct(int productId, int mealId)
+    {
+        var result = await MatDialogService.AskAsync("Are you sure you want to delete the selected product from the meal?", new string[] { "Yes", "Cancel" });
+        if (result == "Yes")
+        {
+            await _mealService.RemoveProductFromMeal(mealId, productId);
+            Toaster.Add("Product Deleted", MatToastType.Success, "Success");
+            StateHasChanged();
+        }
+    }
+
+    private void OnChangeMeal(string mealSelected)
+    {
+        mealId = int.Parse(mealSelected);
+    }
+
+    private void OnChangeProduct(string productSelected)
+    {
+        productId = int.Parse(productSelected);
+    }
+}

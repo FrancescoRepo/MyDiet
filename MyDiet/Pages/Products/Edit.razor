@@ -29,7 +29,7 @@ else
                         <ValidationMessage For="@(() => productDto.Description)" />
                     </p>
                     <p>
-                        <MatSelectItem Items="@productDto.ProductCategories" @bind-Value="@productDto.ProductCategory" FullWidth="true" Label="Product Category">
+                        <MatSelectItem Items="@productDto.ProductCategories" @bind-Value="@productDto.ProductCategory" FullWidth="true" Outlined="true" Label="Product Categories">
                             <ItemTemplate Context="productCategoryContext">
                                 <span>@productCategoryContext?.Description</span>
                             </ItemTemplate>

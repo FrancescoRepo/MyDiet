@@ -19,17 +19,18 @@
                     <ValidationMessage For="@(() => productDto.Name)" />
                 </p>
                 <p>
-                    <MatTextField Label="Product Name" @bind-Value="@productDto.Description" FullWidth="true" />
+                    <MatTextField Label="Product Description" @bind-Value="@productDto.Description" FullWidth="true" />
                     <ValidationMessage For="@(() => productDto.Description)" />
                 </p>
                 <p>
-                    <MatSelectItem Items="@productDto.ProductCategories" @bind-Value="@productDto.ProductCategory">
+                    <MatSelectItem Items="@productDto.ProductCategories" @bind-Value="@productDto.ProductCategory" Outlined="true" Label="Product Cateogories">
                         <ItemTemplate Context="productCategoryContext">
                             <span>@productCategoryContext?.Description</span>
                         </ItemTemplate>
                     </MatSelectItem>
                 </p>
-                <MatButton Type="submit" Raised="true">Save</MatButton>
+                <MatButton Type="submit" Raised="true" Style="background: green;" Icon="save">Save</MatButton>
+                <MatButton Style="background: red;" Type="button" Raised="true" @onclick="Back" Icon="block">Cancel</MatButton>
             </div>
         </div>
     </div>
@@ -56,7 +57,12 @@
         await _productService.Create(product);
 
         Toaster.Add("Product added", MatToastType.Success, "Success");
-        NavigationManager.NavigateTo("/productcategories");
+        NavigationManager.NavigateTo("/products");
+    }
+
+    void Back()
+    {
+        NavigationManager.NavigateTo("/products");
     }
 
     private void EditContext_OnFieldChanged(object sender,

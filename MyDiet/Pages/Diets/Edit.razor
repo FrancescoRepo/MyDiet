@@ -30,7 +30,7 @@ else
                         <ValidationMessage For="@(() => dietDto.Description)" />
                     </p>
                     <p>
-                        <MatSelectItem Items="@dietDto.Patients" @bind-Value="@dietDto.PatientDto">
+                        <MatSelectItem Items="@dietDto.Patients" @bind-Value="@dietDto.PatientDto" FullWidth="true" Outlined="true" Label="Patients">
                             <ItemTemplate Context="patientCategoryContext">
                                 <span>@patientCategoryContext?.Name @patientCategoryContext?.Surname </span>
                             </ItemTemplate>

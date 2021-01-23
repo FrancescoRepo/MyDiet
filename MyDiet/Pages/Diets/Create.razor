@@ -29,7 +29,8 @@
                         </ItemTemplate>
                     </MatSelectItem>
                 </p>
-                <MatButton Type="submit" Raised="true">Save</MatButton>
+                <MatButton Type="submit" Raised="true" Style="background: green;" Icon="save">Save</MatButton>
+                <MatButton Type="button" Raised="true" Style="background: red;" Icon="block" @onclick="Back">Cancel</MatButton>
             </div>
         </div>
     </div>
@@ -55,6 +56,11 @@
         await _dietService.Create(diet);
 
         Toaster.Add("Diet added", MatToastType.Success, "Success");
+        NavigationManager.NavigateTo("/diets");
+    }
+
+    void Back()
+    {
         NavigationManager.NavigateTo("/diets");
     }
 

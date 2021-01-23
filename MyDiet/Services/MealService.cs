@@ -38,9 +38,9 @@ namespace MyDiet.Services
             await _mealRepository.Delete(id);
         }
 
-        public async Task AddMealToDiet(int dietId, int mealId)
+        public async Task<bool> AddMealToDiet(int dietId, int mealId)
         {
-            await _mealRepository.AddMealToDiet(dietId, mealId);
+            return await _mealRepository.AddMealToDiet(dietId, mealId);
         }
 
         public async Task RemoveMealFromDiet(int dietId, int mealId)
@@ -51,6 +51,16 @@ namespace MyDiet.Services
         public bool CheckIfUnique(string parameter, MealDto entityDto)
         {
             return _mealRepository.CheckIfUnique(parameter, entityDto);
+        }
+
+        public async Task<bool> AddProductToMeal(int mealId, int productId)
+        {
+            return await _mealRepository.AddProductToMeal(mealId, productId);
+        }
+
+        public async Task RemoveProductFromMeal(int mealId, int productId)
+        {
+            await _mealRepository.RemoveProductFromMeal(mealId, productId);
         }
     }
 }
